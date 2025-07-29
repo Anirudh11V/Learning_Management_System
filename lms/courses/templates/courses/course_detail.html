@@ -1,0 +1,78 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<title>LMS- {{page_title}}</title>
+<main>
+    <section>
+        <div class="container">
+            <a href="{% url 'courses:course_list' %}">&laquo; Back to All Courses</a>
+            <h1>{{course.titile}}</h1>
+
+            <div class="course_info">
+                {% if course.thumbnail %}
+                <img src="{{course.thumbnail.url}}" alt="{{course.titile}}Thumbnail">
+                {% else %}
+                <img src="https://via.placeholder.com/250x180?text=No+Image" alt="No Thumbnail">
+                {% endif %}
+
+                <div class="course_info_text">
+                    <p>{{course.description}}</p>
+                    <div class="course_meta">
+                        <span>Category: {{course.category.Name|default:"N/A"}}</span>
+                        <span>Instructor: {{course.instructor.get_fullname|default:course.instructor.username}}</span>
+                        <span>Price: {% if course.price > 0%}RS-{{course.price}}
+                                    {% else %}Free{% endif %}
+                        </span>
+                        <span>Created: {{course.created_at|date:"M d,Y"}}</span>
+                    </div>
+                </div>
+            </div>
+            {% if request.user.is_authenticated and request.user.is_student %}
+                {% if is_enrolled %}
+
+                <div class="already_enrolled">You are already_enrolled in this COURSE!!!!!!.</div>
+                {% else %}
+                <a href="#" class="enroll_btn"> Enroll Now</a>
+
+                {% endif %}
+            {% elif not request.user.is_authenticated %}
+                <p>Please
+                    <a href="/admin/">login</a>as a student to enroll.
+                </p>
+            {% endif %}
+
+            <h2>Course Content</h2>
+            {% if modules %}
+            {% for module in modules %}
+            <div class="module_item">
+                <h3>Module {{module.order}}: {{module.title}}</h3>
+                {% if module.description %}
+                <p>{{module.description}}</p>
+                {% endif %}
+
+                {% if module.lesson.all %}
+                <h4>Lessons: </h4>
+                <ul>
+                    {% for lesson in module.lesson.all %}
+                    <li class="lesson_item">
+                        <a href="{% url 'courses:lesson_details' course.slug module.slug lesson.slug %}">
+                            {{lesson.order}}, {{lesson.title}} 
+                            ({{lesson.get_content_type_display}})
+                        </a>
+                        {% if lesson.content_type == 'quiz' %}
+                        (Quiz)
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No lessons in this Module yet.</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </section>
+</main>
+
+{% endblock content %}

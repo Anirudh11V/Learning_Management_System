@@ -1,0 +1,52 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<title>LMS- {{page_title}}</title>
+<main>
+    <section>
+        <div class="container">
+            <h1>{{page_title}}</h1>
+            <div class="categories">
+
+                <h3>Categories : </h3>
+                <a href="{% url 'courses:course_list'%}" 
+                class="{% if not selected_category %}active{% endif %}"> ALL </a>
+
+                {% for category in categories %}
+
+                <a href="{% url 'courses:course_list' %}?category={{category.slug}}"
+                class="{% if selected_category and selected_category.slug == category.slug %} active {% endif %}">
+                {{category.Name}}</a>
+
+                {% endfor %}
+
+            </div><br>
+            {% if courses %}
+            {% for course in courses %}
+
+            <div class="course-card">
+
+                {% if course.thumbnail %}
+                <img src="{{course.thumbnail.url}}" alt="{{course.title}}Thumbnail">
+                {% else %}
+                <img src="https://via.placeholder.com/120x90?text=No+Image" alt="No Thumbnail">
+                {% endif %}
+
+                <div class="course-card-content">
+                    <h3><a href="{% url 'courses:course_details' course.slug %}">{{course.title}}</a></h3>
+                    <p>{{course.description|truncatechars:150}}</p>
+                    <p>Instructor : {{course.instructor.get_full_name|default:course.instructor.username}}</p>
+                    <p>Price : {% if course.price > 0 %} RS-{{course.price}}{% else %}Free{% endif %}</p>
+                </div>
+
+            </div><hr><br>
+
+            {% endfor %}
+            {% else %}
+            <p>No Course{% if selected_category %} in this category{% endif %}</p>
+            {% endif %}
+        </div>
+    </section>
+</main>
+
+{% endblock content %}

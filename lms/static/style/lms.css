@@ -1,0 +1,99 @@
+body{
+    font-family: Arial, Helvetica, sans-serif; margin: 20px; background-color: #f4f4f4;
+}
+
+.container{
+    max-width: 960px; margin: auto; background-color: #fff; padding: 20px; border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+h1{color: #333;}
+h2, h3{color: #555; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 20px;} 
+
+
+
+/* Course_list */
+.course-card img{
+    width: 120px; height: 90px; object-fit: cover; margin-right: 15px; border-radius: 3px;
+}
+.course-card-content h3{
+    margin-top: 0; margin-bottom: 5px;
+}
+.course-card-content p{
+    font-size: 0.9rem; color: #666; margin-bottom: 5px;
+}
+.course-card-content a{
+    text-decoration: none; color: #007bff; font-weight: bold;
+}
+.course-card-content a:hover{text-decoration: underline;}
+.categories a{
+    display: inline-block; padding: 5px 10px; margin-right: 5px; margin-bottom: 10px; border: 1px solid #007bff;
+    border-radius: 3px; text-decoration: none; color: #007bff;
+}
+.categories a.active, .categories a:hover{background-color: #007bff; color: white;}
+
+/* course_details */
+.course_info{
+    display: flex; align-items: flex-start; margin-bottom: 20px;
+}
+.course_info img{
+    width: 250px; height: 180px; object-fit: cover; border-radius: 5px;
+}
+.course_info_text{flex-grow: 1;}
+.course_meta span{
+    display: block; font-size: 0.9rem; color: #777; margin-bottom: 5px;
+}
+.module_item{
+    background-color: #f9f9f9; border: 1px solid #eee; margin-bottom: 10px; padding: 15px; border-radius: 5px;
+}
+.lesson_item{margin-left: 20px; margin-bottom: 5px; list-style: none; }
+.lesson_item a{text-decoration: none; color: #007bff;}
+.lesson_item a:hover{text-decoration: underline;}
+
+.enroll_btn{
+    background-color: #28a745; color: #eee; padding: 10px 20px; margin-top: 15px;
+    border: none; border-radius: 5px; cursor: pointer; font-size: 1.1rem; text-decoration: none; display: inline-block;
+}
+.enroll_btn:hover{background-color: #218838;}
+
+.already_enrolled{
+    background-color: #6c757d; color: #eee; padding: 10px 20px; border-radius: 5px; font-size: 1.1rem;
+    display: inline-block; margin-top: 15px; cursor: default;
+}
+
+
+/* lesson_detail */
+.lesson_content h4{color: #007bff; margin-top: 0;}
+.video_container{
+    position: relative; padding-bottom: 56.25%; height: 0; overflow:  hidden;
+    max-width: 100%; background: #000; margin-bottom: 20px;
+}
+.video_container iframe, .video_container object, .video_container embed{
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+}
+
+.mark_complete_form{margin-top: 20px; text-align: right;}
+.mark_complete_button{
+    background-color: #007bff; color: #eee; padding: 10px 15px; border: none;
+    border-radius: 5px; cursor: pointer; font-size: 1em;
+}
+.mark_complete_button:hover{background-color: #0056b3;}
+.completed_message{
+    background-color: #28a745; color: white; padding: 10px 15px; border-radius: 5px; 
+    display: inline-block; margin-top: 10px;
+}
+
+.navlinks{
+    margin-top: 20px; display: flex; justify-content: space-between;
+}
+.navlinks a{color: #007bff; text-decoration: none;}
+.navlinks a:hover{text-decoration: underline;}
+
+
+/* Access_denied.html */
+#access main{
+    font-family: Arial, Helvetica, sans-serif; margin: 20px; background-color: #f8d7da; color: #721c24;
+    border: 1px solid #f5c6cb; border-radius: 5px; padding: 20px; max-width: 600px; margin: 50px auto;
+    text-align: center;
+}
+#access a{color: #dc3545; text-decoration: none; font-weight: bold;}
+#access a:hover{text-decoration: underline;}

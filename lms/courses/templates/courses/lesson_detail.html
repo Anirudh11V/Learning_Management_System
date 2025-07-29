@@ -1,0 +1,75 @@
+{% extends .main.html' %}
+{% load static %}
+{% block content %}
+
+<main>
+    <section>
+        <div class="container">
+            <p>
+                <a href="{% url 'courses:course_detail' course.slug %}">&laquo; Back to {{course.title}}</a>
+                <h1>Lesson : {{lesson.order}}: {{lesson.titile}}</h1>
+                <p>Module: {{module.title}}</p>
+            </p>
+            <div class="lesson_content">
+                {% if lesson.content_type == 'text' %}
+                    <h4>Text Content</h4>
+                    {{lesson.text_content|safe}}
+
+                {% elif lesson.content_type == 'video_url' %}
+                    <h4>Video Content</h4>
+
+                    {% if lesson.video_url %}
+                    <div class="video_container">
+                        <iframe src="{{lesson.video_url}}" frameborder="0"allowfullscreen></iframe>
+                    </div>
+                    {% else %}
+                    <p>No Video URL provided</p>
+                    {% endif %}
+                
+                {% elif lesson.content_type == 'file' %}
+                    <h4>File</h4>
+
+                    {% if lesson.file_upload %}
+                    <p>
+                        <a href="{{lesson.file_upload.url}}" download>
+                            Download:{{lesson.file_upload.name|cut:"lesson_files/"}}
+                        </a>
+                    </p>
+                    {% else %}
+                    <p>No file </p>
+                    {% endif %}
+
+                {% elif lesson.content_type == 'quiz' %}
+                    <h4>Quiz</h4>
+                    <p>This lesson continue quiz access here.</p>
+
+                    <p><a href="#"> Go to quiz</a></p>
+                
+                {% else %}
+                    <p>Unsypported lesson content type</p>
+
+                {% endif %}
+            </div>
+
+            <div class="mark_complete_section">
+                {% if lesson_completion.is_completed %}
+                    <div class="completed_message">
+                        Lesson Completed! ({{lesson_completion.completed_at|date:"M d, Y H:i"}})
+                    </div>
+                {% else %}
+
+                    <form action="{% url 'courses:mark_lesson_complete' course.slug module.slug lesson.slug %}" 
+                    method="post" class="mark_complete_form">{% csrf_token %}
+                        <button type="submit" class="mark_complete_button">Mark-as-complete</button>
+                    </form>
+                {% endif %}
+            </div>
+            <div class="nav_links">
+                <a href="#">&larr; Previous Lesson</a>
+                <a href="#">&larr; Next Lesson</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock content %}

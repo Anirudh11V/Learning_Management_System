@@ -1,0 +1,19 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<main>
+    <section id="access">
+        <h1>Access Denied</h1>
+        <p>{{message|default:"You do not have permission."}}</p>
+        <p><a href="{% url 'courses:course_list' %}"> Back to Courses</a></p>
+
+        {% if not request.user.is_authenticated %}
+            <p>Please
+                <a href="/admin/">login</a> to access.
+            </p>
+        {% endif %}
+    </section>
+</main>
+
+{% endblock content %}
