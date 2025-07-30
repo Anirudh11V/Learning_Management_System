@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.contrib import messages
 # Create your views here.
 
+@login_required
 def course_list(request):
     category_slug = request.GET.get('category')
     courses = Course.objects.filter(is_published= True)
@@ -23,7 +24,7 @@ def course_list(request):
     context= {'courses': courses, "categories": categories, 'selected_category': category, "page_title": 'All Courses'}
     return render(request, 'courses/course_list.html', context)
 
-
+@login_required
 def course_detail(request, course_slug):
     course = get_object_or_404(Course, slug= course_slug, is_published= True)
     modules = course.modules.prefetch_related('lesson').all()
@@ -38,9 +39,34 @@ def course_detail(request, course_slug):
 
 @login_required
 def lesson_detail(request, course_slug, module_slug, lesson_slug):
+
+    # print(f"course_slug : '{course_slug}'")
+    # print(f"module_slug : '{module_slug}'")
+    # print(f"lesson_slug : '{lesson_slug}'")
+    # print("-" * 30)
+
+    # try:
     course = get_object_or_404(Course, slug= course_slug, is_published= True)
+    #     print(f"DEBUG : Found course : {course.title} (ID: {course.id})")
+    # except Http404:
+    #     print(f"ERROR : Course not found with slug: '{course_slug}' or not published")
+    #     raise
+
+    # try:
     module = get_object_or_404(Module, course= course, slug= module_slug)
+    #     print(f"DEBUG : Found module : {module.title} (ID: {module.id})")
+    # except Http404:
+    #     print(f"ERROR : Course not found with slug: '{module_slug}' or not published")
+    #     raise
+
+    # try:
     lesson = get_object_or_404(Lesson, module= module, slug= lesson_slug, is_published= True)
+    #     print(f"DEBUG : Found lesson : {lesson.title} (ID: {lesson.id})")
+    # except Http404:
+    #     print(f"ERROR : Course not found with slug: '{lesson_slug}' or not published")
+    #     raise
+
+    # print("-" * 30)
 
     if not request.user.is_student:
         return render(request, 'courses/access_denied.html', 
@@ -87,7 +113,7 @@ def mark_lesson_completion(request, course_slug, module_slug, lesson_slug):
     except IntegrityError:
         pass
 
-        return redirect('courses:lesson_detail', course_slug= course_slug, module_slug= module_slug, lesson_slug= lesson_slug)
+        return redirect('courses:lesson_details', course_slug= course_slug, module_slug= module_slug, lesson_slug= lesson_slug)
     
-    return redirect('courses:lesson_detail', course_slug= course_slug, module_slug= module_slug, lesson_slug= lesson_slug)
+    return redirect('courses:lesson_details', course_slug= course_slug, module_slug= module_slug, lesson_slug= lesson_slug)
   

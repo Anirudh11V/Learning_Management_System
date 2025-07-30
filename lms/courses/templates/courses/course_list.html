@@ -1,8 +1,21 @@
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
-<title>LMS- {{page_title}}</title>
+
+{% if messages %}
+    <ul class="messages">
+        {% for i in messages %}
+            <li {% if i.tags %} class="{{i.tags}}" {% endif %}>
+                {{i}}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
 <main>
+    <section id="lo">
+        <aside><a href="{% url 'users:logout' %}" >logout</a></aside>
+    </section>
     <section>
         <div class="container">
             <h1>{{page_title}}</h1>

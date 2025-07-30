@@ -1,12 +1,23 @@
-{% extends .main.html' %}
+{% extends 'main.html' %}
 {% load static %}
 {% block content %}
+
+
+{% if messages %}
+    <ul class="messages">
+        {% for i in messages %}
+            <li {% if i.tags %} class="{{i.tags}}" {% endif %}>
+                {{i}}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
 
 <main>
     <section>
         <div class="container">
             <p>
-                <a href="{% url 'courses:course_detail' course.slug %}">&laquo; Back to {{course.title}}</a>
+                <a href="{% url 'courses:course_details' course.slug %}">&laquo; Back to {{course.title}}</a>
                 <h1>Lesson : {{lesson.order}}: {{lesson.titile}}</h1>
                 <p>Module: {{module.title}}</p>
             </p>
@@ -46,7 +57,7 @@
                     <p><a href="#"> Go to quiz</a></p>
                 
                 {% else %}
-                    <p>Unsypported lesson content type</p>
+                    <p>Unsupported lesson content type</p>
 
                 {% endif %}
             </div>

@@ -2,6 +2,17 @@
 {% load static %}
 {% block content %}
 <title>LMS- {{page_title}}</title>
+
+{% if messages %}
+    <ul class="messages">
+        {% for i in messages %}
+            <li {% if i.tags %} class="{{i.tags}}" {% endif %}>
+                {{i}}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
 <main>
     <section>
         <div class="container">
@@ -31,13 +42,19 @@
                 {% if is_enrolled %}
 
                 <div class="already_enrolled">You are already_enrolled in this COURSE!!!!!!.</div>
-                {% else %}
-                <a href="#" class="enroll_btn"> Enroll Now</a>
 
+                {% else %}
+                <form action="{% url 'enrollment:enroll_course' course.slug %}" method="post">{% csrf_token %}
+                    <button type="submit" class="enroll_btn" >Enroll Now</button>
+                </form>
                 {% endif %}
+
+            {% elif request.user.is_authenticated and request.user.is_instuctor %}
+                <div class="already_enrolled">Instructor cannot enroll.</div>
+
             {% elif not request.user.is_authenticated %}
                 <p>Please
-                    <a href="/admin/">login</a>as a student to enroll.
+                    <a href="{% url 'users:login' %}">login</a>as a student to enroll.
                 </p>
             {% endif %}
 

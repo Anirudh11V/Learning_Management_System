@@ -19,10 +19,21 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.contrib.messages.views import SuccessMessageMixin
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # users app.
+    path('accounts/', include('users.urls')),
+    path('', include('users.urls')),
+
+    # Enrollment app.
+    path('enroll/', include('enrollment.urls')),
+
+    # courses app.
     path('courses', include('courses.urls')),
-    path('', include('courses.urls'))
+    
 ]
 
 if settings.DEBUG:

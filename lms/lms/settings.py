@@ -47,6 +47,12 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = 'users.MemberUser'
 
+# Redirect url after login / logout.
+
+LOGIN_REDIRECT_URL = '/courses:course_list/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGIN_URL = "/accounts/login/"
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

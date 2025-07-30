@@ -1,0 +1,30 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<main id="profile">
+    <section>
+        <div class="container">
+            <h1>{{page_title}}</h1>
+            
+            <div class="profile_info">
+                <p><strong>Username : </strong>{{user.username}}</p>
+                <p><strong>Email : </strong>{{user.email}}</p>
+                <p><strong>Full Name : </strong>{{user.get_full_name|default:"Not set"}}</p>
+                <p><strong>Student : </strong>{% if request.user.is_student %}YES{% else %}No{% endif %}</p>
+                <p><strong>Instructor : </strong>{% if request.user.is_instructor %}YES{% else %}No{% endif %}</p>
+                <p><strong>Date Joined : </strong>{{user.date_joined|date:"M d, Y"}}</p>
+            </div>
+
+            <div class="action_link">
+                <a href="{% url 'courses:course_list' %}">Back to course</a> <br>
+
+                <form action="{% url 'users:logout' %}" method="post" class="btn btn">{% csrf_token %}
+                    <button class="action_link_a_logout-btn" type="submit">Logout</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock content %}
