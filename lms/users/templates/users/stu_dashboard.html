@@ -1,0 +1,67 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+<main>
+    <section>
+        <div class="dash_container">
+            <h1 class="dash_title">{{page_title}}</h1>
+
+            {% if request.user.is_authenticated %}
+                {% if request.user.is_student %}
+                    {% if enrolled_course %}
+                        <div class="course_card_list">
+                            {% for enroll in enrolled_course %}
+
+                            <div class="course_card">
+
+                                <h3>{{enroll.course.title}}</h3>
+                                <p class="instructor">Instructor : {{enroll.course.instructor.username}}</p>
+                                <p>{{enroll.course.description|truncatechars:100}}</p>
+                                <a href="{% url 'courses:course_details' enroll.course.slug %}" class="view_btn">
+                                    view course
+                                </a>
+                                
+                                {% if enroll.course.module.first.lesson.first %}
+                                    <a href="{% url 'courses:lesson_details' enroll.course.slug 
+                                    enroll.course.module.first.slug
+                                    enroll.course.module.first.lesson.first.slug %}" class="view_btn">
+                                    start/continue_learning
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                            {% endfor %}
+                        </div>
+                    {% else %}
+
+                        <p class="no_course_msg">
+                            You haven't enrolled in any course yet. Explore our <a href="{% url 'courses:course_list' %}">
+                                available course.
+                            </a>
+                        </p>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <p class="no_course_msg">Access Denied : This dashboard is only for students only.</p>
+                    <p class="no_course_msg"> If you are an instructor, please proceed to your
+                        <a href="{% url 'users:profile' %}">pofile page</a>
+                    </p>
+
+                {% endif %}
+            
+            {% else %}
+
+                <p class="login_prompt">please 
+                    <a href="{% url 'users:login' %}">log in</a> to view your learning dashboard.
+                </p>
+            
+            {% endif %}
+        </div>
+    </section>
+</main>
+
+{% endblock content %}

@@ -8,6 +8,28 @@
     <link rel="stylesheet" href="{% static 'style/lms.css' %}">
 </head>
 <body>
+    <header>
+        <nav>
+            <a href="{% url 'courses:course_list' %}">Courses</a>
+            {% if request.user.is_authenticated %}
+
+                {% if request.user.is_student %}
+
+                    <a href="{% url 'users:student_dashboard' %}">My Learning</a>
+                    
+                {% endif %}
+
+                <a href="{% url 'users:profile' %}">Profile</a>
+                <a href="{% url 'users:logout' %}">Logout - ({{request.user.username}}) </a>
+
+            {% else %} 
+
+                <a href="{% url 'users:register' %}">Register</a>
+                <a href="{% url 'users:login' %}">Login</a>
+
+            {% endif %}
+        </nav>
+    </header>
     
     {% block content %}
 

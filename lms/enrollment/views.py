@@ -8,7 +8,7 @@ from .models import Enroll
 
 # Create your views here.
 
-@login_required
+@login_required(login_url= 'users:login')
 def enroll_course(request, course_slug):
     course = get_object_or_404(Course, slug= course_slug, is_published= True)
 

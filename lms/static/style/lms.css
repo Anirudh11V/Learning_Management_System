@@ -186,3 +186,35 @@ h2, h3{color: #555; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-t
 
 .action_link_a_logout-btn {background-color: #dc3545;}
 .action_link_a_logout-btn:hover{background-color: #c82333;}
+
+
+/* student dashboard.html */
+.dash_container{
+    max-width: 900px; margin: 40px auto; padding: 2px; background-color: #f9f9f9;
+    border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); font-family: Arial, Helvetica, sans-serif;
+}
+.dash_title{
+    color: #333; text-align: center;margin-bottom: 30px; font-size: 2.2em;
+}
+.course_card_list{display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;}
+.course_card{
+    background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px;
+    padding: 20px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); 
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.course_card:hover{transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); }
+.course_card h3{color: #007bff; margin-top: 0; font-size: 1.5em; margin-bottom: 10px;}
+.course_card p{color: #555; line-height: 1.5; font-size: 0.9em; margin-bottom: 5px;}
+.course_card .instructor{font-style: italic; color: #777; margin-bottom: 15px;}
+
+.course_card .view_btn{
+    display: inline-block; background-color: #28a745; color: white; font-weight: bold; 
+    padding: 10px 15px; border-radius: 5px; text-decoration: none; transition: background-color 0.2s ease-in-out;
+}
+.course_card .view_btn:hover{background-color: #218838;}
+
+.no_course_msg{text-align: center; color: #666; font-size: 1.1em; margin-top: 50px;}
+
+.login_prompt{text-align: center; color: #555; font-size: 1.1em; margin-top: 50px;}
+.login_prompt a{color: #007bff; text-decoration: none; font-weight: bold;}
+.login_prompt a:hover{text-decoration: underline;}

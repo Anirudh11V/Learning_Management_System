@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.contrib import messages
 # Create your views here.
 
-@login_required
+
 def course_list(request):
     category_slug = request.GET.get('category')
     courses = Course.objects.filter(is_published= True)
@@ -24,7 +24,7 @@ def course_list(request):
     context= {'courses': courses, "categories": categories, 'selected_category': category, "page_title": 'All Courses'}
     return render(request, 'courses/course_list.html', context)
 
-@login_required
+@login_required(login_url= 'users:login')
 def course_detail(request, course_slug):
     course = get_object_or_404(Course, slug= course_slug, is_published= True)
     modules = course.modules.prefetch_related('lesson').all()
@@ -37,6 +37,7 @@ def course_detail(request, course_slug):
     return render(request, 'courses/course_detail.html', context)
 
 
+@login_required(login_url= 'users:login')
 @login_required
 def lesson_detail(request, course_slug, module_slug, lesson_slug):
 
@@ -84,6 +85,8 @@ def lesson_detail(request, course_slug, module_slug, lesson_slug):
     context= {'course': course, 'module': module, 'lesson': lesson, 'lesson_completion': lesson_completion, 'page_title': lesson.title}
     return render(request, 'courses/lesson_detail.html', context)
 
+
+@login_required(login_url= 'users:login')
 @login_required
 def mark_lesson_completion(request, course_slug, module_slug, lesson_slug):
     if request.method == 'POST':

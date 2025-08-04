@@ -4,8 +4,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse_lazy
+from django.db import IntegrityError
 
 from .forms import MemberUserChangeForm, MemberUserCreation
+from enrollment.models import Enroll
 # Create your views here.
 
 
@@ -64,7 +66,23 @@ def logout_user(request):
     messages.success(request, "You have been logged out.")
     return redirect('users:login')
 
-@login_required
+@login_required(login_url= 'users:login')
 def profile(request):
     context ={'user': request.user, 'page_title': 'profile'}
     return render(request, 'users/profile.html', context)
+
+
+@login_required(login_url= 'users:login')
+def student_dashboard(request):
+    if not request.user.is_student:
+        messages.warning(request, "This page is only for student.")
+
+        if request.user.is_instructor:
+            return redirect('users:profile')
+        else:
+            return redirect('courses:course_list')
+        
+    enrolled_course = Enroll.objects.filter(student= request.user).select_related('course')
+
+    context= {'enrolled_course': enrolled_course, 'page_title': 'My Learning Dashboard'}
+    return render(request, 'users/stu_dashboard.html', context)
