@@ -29,6 +29,7 @@
         <h1>Your profile</h1>
         <p>Username : {{request.user.username}}</p>
         <p>Email : {{request.user.email}}</p>
+        <p>Change Password : <a href="{% url 'password_reset' %}">Click Here...</a></p>
 
         {% if request.user.is_student %}
             <p>You are a student.</p>

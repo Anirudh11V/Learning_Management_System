@@ -38,7 +38,6 @@ def course_detail(request, course_slug):
 
 
 @login_required(login_url= 'users:login')
-@login_required
 def lesson_detail(request, course_slug, module_slug, lesson_slug):
 
     # print(f"course_slug : '{course_slug}'")
@@ -87,7 +86,6 @@ def lesson_detail(request, course_slug, module_slug, lesson_slug):
 
 
 @login_required(login_url= 'users:login')
-@login_required
 def mark_lesson_completion(request, course_slug, module_slug, lesson_slug):
     if request.method == 'POST':
         course= get_object_or_404(Course, slug= course_slug, is_published= True)

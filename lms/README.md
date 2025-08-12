@@ -12,7 +12,7 @@ and basic lesson content delivery and tracking.
 -Model relationships,
 -Function_based views,
 -URL routing and namespacing,
--Djanfo forms and Form validations,
+-Django forms and Form validations,
 -Database management,
 -Basic templates and user interface.
 

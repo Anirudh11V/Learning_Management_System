@@ -5,22 +5,23 @@
 <main id="login">
     <section>
         <div class="form_container">
-            <h1>{{page_title}}</h1>
-            {% if messsages %}
-                <ul class="messsages">
-                    {% for i in messsages %}
-                        <li {% if i.tags %} class="{{i.tags}}" {% endif %}>{{i}}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
+            <h2>{{page_title}}</h2>
             <form action="" method="post"> {% csrf_token %}
-                {{form.as_p}}
-                <button type="submit">Login</button>
-            </form><br>
+                <div class="form_group">
+                    <label for="{{form.username.id_for_label}}">Username : </label>
+                    {{form.username}}
+                </div>
+                <div class="form_group">
+                    <label for="{{form.password.id_for_label}}">Password : </label>
+                    {{form.password}}
+                </div>
+
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
 
             <div class="from_link">
-                Don't have an account?<a href="{% url 'users:register' %}">Register Here</a>
+                <p class="form_text">Don't have an account?<a href="{% url 'users:register' %}">Register Here</a></p>
+                <p class="form_text"><a href="{% url 'password_reset' %}">Forget Your password?</a></p>
             </div>
         </div>
     </section>
