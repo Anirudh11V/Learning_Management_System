@@ -3,16 +3,6 @@
 {% block content %}
 <title>LMS- {{page_title}}</title>
 
-{% if messages %}
-    <ul class="messages">
-        {% for i in messages %}
-            <li {% if i.tags %} class="{{i.tags}}" {% endif %}>
-                {{i}}
-            </li>
-        {% endfor %}
-    </ul>
-{% endif %}
-
 <main>
     <section>
         <div class="container">

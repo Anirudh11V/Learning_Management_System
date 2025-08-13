@@ -1,0 +1,56 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+{% block content %}
+
+<main>
+    <section>
+        <div class="dash_container">
+
+            <h2 class="dash_title">{{page_title}}</h2>
+            <a href="{% url 'courses:course_create' %}" class="create_course">Create New Course</a>
+
+            {% if instructor_course %}
+                <div class="course_card_list">
+
+                    {% for course in instructor_course %}
+                        <div class="course_card">
+                            <h3>{{course.title}}</h3>
+                            <p>{{course.description|truncatechars:100}}</p>
+                            <p class="instructor">
+                                {% if course.is_published %}
+                                    <span class="status_publish">Published</span>
+                                {% else %}
+                                    <span class="status_draft">Draft</span>
+                                {% endif %}
+                            </p>
+                            <a href="{% url 'courses:course_details' course.slug %}" class="view_btn">View Course</a>
+
+                            <a href="{% url 'courses:course_update' course.slug %}" class="edit_btn">Edit</a>
+                            <a href="{% url 'courses:course_delete' course.slug %}" class="del_btn">Delete</a>
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+            <p class="no_course_msg">
+                You haven't created any Courses yet.
+            </p>
+
+            <p class="no_course_msg">
+                Click the button above to create Your first course
+            </p>
+
+            {% endif %}
+
+        </div>
+    </section>
+</main>
+
+{% endblock content %}

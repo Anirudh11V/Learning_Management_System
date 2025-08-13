@@ -38,7 +38,7 @@
 
         {% if request.user.is_instructor %}
             <p>You are a instructor.</p>
-            <a href="#">Instructor dashboard.</a>
+            <a href="{% url 'users:instructor_dashboard' %}">Instructor dashboard.</a>
         {% endif %}
 
         <a href="{% url 'users:logout' %}">Logout</a>

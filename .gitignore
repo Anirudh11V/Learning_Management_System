@@ -1,3 +1,5 @@
 omniscience
-
+.env
 db.sqlite3
+
+.dockerignore

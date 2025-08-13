@@ -6,14 +6,6 @@
     <section>
         <div class="form_container">
             <h1>{{page_title}}</h1>
-            {% if messsages %}
-                <ul class="messsages">
-                    {% for i in messsages %}
-                        <li {% if i.tags %} class="{{i.tags}}" {% endif %}>{{i}}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
             <form action="" method="post"> {% csrf_token %}
                 {{form.as_p}}
                 <button type="submit">Register</button>

@@ -286,3 +286,10 @@ h2, h3{color: #555; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-t
 
 #p_reset_comp .login_link{color: #007bff; text-decoration: none; font-weight: bold;}
 #p_reset_comp .login_link:hover{text-decoration: underline;}
+
+
+/* footer */
+#foot{
+    text-align: center;margin: 25px auto; font-family: Verdana, Geneva, Tahoma, sans-serif; 
+    font-size: 0.9em; 
+}

@@ -1,0 +1,41 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+{% block content %}
+
+<main>
+    <section>
+        <div class="form_container">
+
+            <h2>{{page_title}}</h2>
+
+            <form action="" method="post"> {% csrf_token %}
+                {% for i in form %}
+
+                    <div class="form_group">
+                        <label for="{{i.id_for_label}}">{{i.label}} : </label>
+                        {{i}}
+
+                        {% if i.errors %}
+                            <ul class="errorlist">
+                                {% for error in i.errors %}
+                                    <li>{{error}}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        
+                    </div>
+
+                {% endfor %}
+                <button type="submit" class="btn-primary">{{page_title}}</button>
+            </form>
+
+        </div>
+    </section>
+</main>
+
+{% endblock content %}

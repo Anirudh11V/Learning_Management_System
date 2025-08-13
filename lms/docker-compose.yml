@@ -1,0 +1,10 @@
+services:
+  web_lms:
+    build: .
+    command: python manage.py runserver 0.0.0.0:1906
+    volumes:
+      - .:/app
+    ports:
+      - '1906:1906'
+    env_file:
+      - .env

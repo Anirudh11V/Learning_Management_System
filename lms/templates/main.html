@@ -21,6 +21,10 @@
                 {% if request.user.is_student %}
 
                     <a href="{% url 'users:student_dashboard' %}" class="btn btn-outline-info">My Learning</a>
+
+                {% elif request.user.is_instructor %}
+
+                    <a href="{% url 'users:instructor_dashboard' %}" class="btn btn-outline-info">My Dashboard</a>
                     
                 {% endif %}
 
@@ -36,8 +40,22 @@
         </nav><br>
     </header>
     
-    {% block content %}
+    <main>
+        {% if messages %}
+            <ul class="messages">
+                {% for i in messages %}
+                    <li class="{{i.tags}}">{{i}}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-    {% endblock content %}
+        {% block content %}
+
+        {% endblock content %}
+    </main>
+
+    <footer>
+        <p id="foot">&copy; 2025 LMS Projects</p>
+    </footer>
 </body>
 </html>

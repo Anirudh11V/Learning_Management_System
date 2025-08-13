@@ -8,6 +8,7 @@ from django.db import IntegrityError
 
 from .forms import MemberUserChangeForm, MemberUserCreation
 from enrollment.models import Enroll
+from courses.models import Course
 # Create your views here.
 
 
@@ -86,3 +87,19 @@ def student_dashboard(request):
 
     context= {'enrolled_course': enrolled_course, 'page_title': 'My Learning Dashboard'}
     return render(request, 'users/stu_dashboard.html', context)
+
+
+@login_required(login_url= 'users:login')
+def Instructor_dashboard(request):
+    if not request.user.is_instructor:
+        messages.warning(request, "This page is only for Instructors.")
+
+        if request.user.is_student:
+            return redirect('users:student_dashboard')
+        else:
+            return redirect('courses:course_list')
+        
+    instructor_courses = Course.objects.filter(instructor= request.user)
+
+    context = {'instructor_course': instructor_courses, 'page_title': 'Instructor Dashboard'}
+    return render(request, 'users/ins_dashboard.html', context)
