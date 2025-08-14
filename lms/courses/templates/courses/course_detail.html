@@ -49,12 +49,25 @@
             {% endif %}
 
             <h2>Course Content</h2>
+
+            {% if course.instructor == request.user %}
+                <p><a href="{% url 'courses:module_create' course.slug %}">Add New Module</a></p>
+            {% endif %}
+
             {% if modules %}
             {% for module in modules %}
             <div class="module_item">
                 <h3>Module {{module.order}}: {{module.title}}</h3>
-                {% if module.description %}
+                
                 <p>{{module.description}}</p>
+
+                {% if course.instructor == request.user %}
+                    <p>
+                        <a href="{% url 'courses:module_update' course.slug module.slug %}">Edit</a>
+                        <a href="{% url 'courses:module_delete' course.slug module.slug %}">delete</a>
+
+                        <a href="{% url 'courses:lesson_create' course.slug module.slug %}">Add New Lesson</a>
+                    </p>
                 {% endif %}
 
                 {% if module.lesson.all %}
@@ -66,6 +79,14 @@
                             {{lesson.order}}, {{lesson.title}} 
                             ({{lesson.get_content_type_display}})
                         </a>
+
+                        {% if course.instructor == request.user %}
+                            <p>
+                                <a href="{% url 'courses:lesson_update' course.slug module.slug lesson.slug%}">Edit</a>
+                                <a href="{% url 'courses:lesson_delete' course.slug module.slug lesson.slug%}">delete</a>
+                            </p>
+                        {% endif %}
+
                         {% if lesson.content_type == 'quiz' %}
                         (Quiz)
                         {% endif %}

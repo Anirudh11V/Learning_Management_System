@@ -10,7 +10,8 @@ h1{color: #333;}
 h2, h3{color: #555; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 20px;} 
 
 /* nav */
-#nav a{justify-items:right ;}
+#nav{display: flex; justify-content: right; margin-top: 0px; gap: 10px;}
+nav h2{color: #007bff; font-family: Arial, Helvetica, sans-serif;}
 
 /* Course_list.html */
 #lo a{text-decoration: none; color: #721c24; font-weight: bold; float: right;}
@@ -171,7 +172,7 @@ h2, h3{color: #555; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-t
 
 #profile .container{
     max-width: 800px; margin: auto; background-color: #fff; padding: 30px; border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
 }
 #profile h1{color: #333; margin-bottom: 25px; text-align: center;}
 
@@ -189,7 +190,7 @@ h2, h3{color: #555; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-t
 .action_link_a_logout-btn:hover{background-color: #c82333;}
 
 
-/* student dashboard.html */
+/* student dashboard.html and Instructor dashboard.html*/
 .dash_container{
     max-width: 900px; margin: 40px auto; padding: 2px; background-color: #f9f9f9;
     border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); font-family: Arial, Helvetica, sans-serif;
@@ -288,6 +289,55 @@ h2, h3{color: #555; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-t
 #p_reset_comp .login_link:hover{text-decoration: underline;}
 
 
+/* course form.html */
+.form_container{
+    max-width: 600px; margin: 50px auto; padding: 30px;
+    border: 1px solid #ddd; border-radius: 8px; background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.form_container h2{text-align: center; color: #333; margin-bottom: 25px; font-size: 1.8em;}
+.form_group{margin-bottom: 20px;}
+
+.form_container label{display: block; color: #555; margin-bottom: 20px; font-weight: bold;}
+
+.form_control{
+    width: 100%; padding: 12px; border: 1px solid #ccc;
+    border-radius: 5px; box-sizing: border-box;
+}
+textarea.form_control{resize: vertical;}
+
+.btn-primary{
+    width: 100%; padding: 12px; background-color: #007bff;
+    border: none; color: white; font-size: 1.1em; font-weight: bold;
+    border-radius: 5px; cursor: pointer; transition: background-color 0.2 ease-in-out;
+}
+.btn-primary:hover{background-color: #0056b3;}
+
+.error_list{
+    color: red; list-style: none; padding: 0; margin-top: 5px; font-size: 0.9rem;
+}
+
+
+/* course confirm delete.html */
+.delete_container{
+    max-width: 500px; margin: 50px auto; padding: 30px;
+    border: 1px solid #fff; border-radius: 8px; background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); text-align: center;
+}
+.delete_container h2{color: #dc3545; margin-bottom: 20px; font-size: 1.8em;}
+.delete_container p{color: #555; line-height: 1.6; margin-bottom: 20px;}
+
+.btn_group{display: flex; justify-content: space-around;}
+.btn-danger, .btn-secondary {
+    padding: 10px 20px; font-weight: bold; text-decoration: none; 
+    border-radius: 5px; transition: opacity 0.2;
+}
+
+.btn-danger{background-color: #dc3545; color: white; border: none;}
+.btn-danger:hover{background-color: #c82333;}
+
+.btn-secondary{background-color: #6c757d; color: white; border: none;}
+.btn-secondary:hover{background-color: #5a6268;}
 /* footer */
 #foot{
     text-align: center;margin: 25px auto; font-family: Verdana, Geneva, Tahoma, sans-serif; 

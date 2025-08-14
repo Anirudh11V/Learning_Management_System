@@ -1,0 +1,67 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+{% block content %}
+
+<main>
+    <section>
+        <div class="container my-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>{{course.title}} Content Management</h2>
+                <a href="{% url 'courses:module_create' course.slug %}" class="btn btn-primary">Add New Module</a>
+            </div>
+
+            {% for i in modules %}
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">{{i.title}}</h4>
+                    </div>
+                    <div>
+                        <a href="{% url 'courses:module_update' course.slug module.pk %}"
+                        class="btn btn-sm btn-outline-secondary me-2"> Edit Module </a>
+
+                        <a href="{% url 'courses:module_delete' course.slug module.pk %}"
+                        class="btn btn-sm btn-outline-danger"> Delete Module </a>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <p>{{module.description|default:"No description provided."}}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <h5>Lessons</h5>
+                        <a href="{% url 'courses:lesson_create' course.slug module.title|slugify %}"
+                        class="btn btn-sm btn-success">Add New Lesson</a>
+                    </div>
+                    <ul class="list-group list-group-flush mt-2">
+                        {% for lesson in module.lessons.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    {{lesson.order}}. {{lesson.title}}
+                                    {% if not lesson.is_published %}
+                                        <span class="badge bg-warning text-dark ms-2">
+                                            Draft
+                                        </span>
+                                    {% endif %}
+                                </span>
+                                <div>
+                                    <a href="{% url 'courses:lesson_update' course.slug module.title|slugify lesson.pk %}"
+                                    class="btn btn-sm btn-outline-secondary me-2">Edit</a>
+                                    <a href="{% url 'courses:lesson_delete' course.slug module.title|slugify lesson.pk %}"
+                                    class="btn btn-sm btn-outline-danger">Delete</a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% empty %}
+            <p class="text-muted">This course has no modules yet.</p>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+
+{% endblock content %}

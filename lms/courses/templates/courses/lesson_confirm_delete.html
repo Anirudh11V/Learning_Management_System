@@ -1,0 +1,31 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+{% block content %}
+
+<main>
+    <section>
+        <div class="delete_container">
+            
+            <h2>{{page_title}}</h2>
+            <p>
+                Are you sure you want to delete the lesson
+                <strong>{{lesson.title}}</strong>? This action cannot be undo.
+            </p>
+
+            <form action="" method="post"> {% csrf_token %}
+                <div class="btn_group">
+                    <button type="submit" class="btn-danger">Delete</button>
+                    <a href="{% url 'users:instructor_dashboard' %}" class="btn-secondary">Cancel</a>
+                </div>
+            </form>
+
+        </div>
+    </section>
+</main>
+
+{% endblock content %}
