@@ -87,8 +87,21 @@ def lesson_detail(request, course_slug, module_slug, lesson_slug):
         student= request.user, lesson= lesson, defaults= {'is_completed': False}
     )
 
-    context= {'course': course, 'module': module, 'lesson': lesson, 
-              'lesson_completion': lesson_completion, 'page_title': lesson.title}
+    lesson_in_module = module.lesson.all().order_by('order')
+
+    lesson_list = list(lesson_in_module)
+    current_lesson_index = lesson_list.index(lesson)
+
+    previous_lesson = None
+    if current_lesson_index > 0:
+        previous_lesson = lesson_list[current_lesson_index - 1]
+
+    next_lesson = None
+    if current_lesson_index < len(lesson_list) - 1:
+        next_lesson = lesson_list[current_lesson_index + 1]
+
+    context= {'course': course, 'module': module, 'lesson': lesson, 'lesson_completion': lesson_completion, 
+              'page_title': lesson.title, 'previous_lesson': previous_lesson, 'next_lesson': next_lesson}
     return render(request, 'courses/lesson_detail.html', context)
 
 # ----------------------------------------------------------------------------------------.
@@ -195,25 +208,25 @@ def course_delete(request, course_slug):     # Course deletion.
         return redirect('users:instructor_dashboard')
     
     context = {'course': course, 'page_title': f'Delete Course: {course.title}'}
-    return render(request, 'courses/course_details.html', context)
+    return render(request, 'courses/course_confirm_delete.html', context)
 
 # ------------- COURSE CRUD ENDS ------------------------------------------------.
 
 # @login_required(login_url= 'users:login')
-# def course_content_manage(request, course_slug):
-#     course = get_object_or_404(Course, slug= course_slug)
+# def course_content_manage(request):
+    # course = get_object_or_404(Course, slug= course_slug)
 
-#     if course.instructor != request.user:
-#         messages.error(request, 'You are not authorized to manage this course.')
-#         return redirect('users:instructor_dashboard')
+    # if course.instructor != request.user:
+    #     messages.error(request, 'You are not authorized to manage this course.')
+    #     return redirect('users:instructor_dashboard')
     
-#     modules = Module.objects.filter(course= course).order_by('order')
+    # modules = Module.objects.filter(course= course).order_by('order')
 
-#     for i in modules:
-#         i.lesson_sorted = i.lesson.all().order_by('order')
+    # for i in modules:
+    #     i.lesson_sorted = i.lesson.all().order_by('order')
 
-#     context = {'course': course, 'modules': modules, 'page_title': f'Manage Content for "{course.title}".'}
-#     return render(request, 'courses/course_content_manage.html', context)
+    # context = {'course': course, 'modules': modules, 'page_title': f'Manage Content for "{course.title}".'}
+    # return render(request, 'courses/partials/instructor_course_management.html')
 
 # ------------- MODULE CRUD ------------------------------------------------.
 

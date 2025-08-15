@@ -5,8 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.db import IntegrityError
+from django.contrib.auth import get_user_model, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
-from .forms import MemberUserChangeForm, MemberUserCreation
+from .forms import MemberUserChangeForm, MemberUserCreation, UserUpdateForm, ProfileUpdateForm, PasswordChangeForm
+from .models import Profile
 from enrollment.models import Enroll
 from courses.models import Course
 # Create your views here.
@@ -69,7 +72,38 @@ def logout_user(request):
 
 @login_required(login_url= 'users:login')
 def profile(request):
-    context ={'user': request.user, 'page_title': 'profile'}
+    user = request.user
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance= user)
+        profile_form = ProfileUpdateForm(request.POST, instance= user.profile)
+        password_form = PasswordChangeForm(data= request.POST, user= user )
+
+        if 'update_user' in request.POST and user_form.is_valid():
+            user_form.save()
+            messages.success(request, "Your accounts details are updated successfully.")
+            return redirect('users:profile')
+        
+        elif 'update_profile' in request.POST and profile_form.is_valid():
+            profile_form.save()
+            messages.success(request, "Your profile details are updated successfully.")
+            return redirect('users:profile')
+        
+        elif 'change_password' in request.POST and password_form.is_valid():
+            new_password = password_form.save()
+            update_session_auth_hash(request, new_password)
+            messages.success(request, "Your password was successfully updated.")
+            return redirect('users:profile')
+        
+    else:
+        user_form = UserUpdateForm(instance= user)
+        profile_form = ProfileUpdateForm(instance= user.profile)
+        password_form = PasswordChangeForm(user= user)
+
+    enrolled_course = Enroll.objects.filter(student= user)
+    instructor_course = Course.objects.filter(instructor= user)
+
+    context ={'user_form': user_form, 'profile_form': profile_form, 'password_form': password_form, 
+              'enrolled_course': enrolled_course, 'instructor_course': instructor_course, 'page_title': 'profile'}
     return render(request, 'users/profile.html', context)
 
 

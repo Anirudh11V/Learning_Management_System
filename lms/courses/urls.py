@@ -3,9 +3,7 @@ from . import views
 
 app_name = 'courses'
 urlpatterns = [
-    path('', views.course_list, name= 'course_list'),
-    path('<slug:course_slug>/', views.course_detail, name= 'course_details'),
-
+    
     # COURSE CRUD URL.
     path('create/', views.course_create, name= 'course_create'),
     path('<slug:course_slug>/update/', views.course_update, name= 'course_update'),
@@ -29,7 +27,8 @@ urlpatterns = [
          name= 'mark_lesson_complete'),
     path('<slug:course_slug>/<slug:module_slug>/<slug:lesson_slug>/', views.lesson_detail, name= 'lesson_details'),
     
-    
-    # path('<slug:course_slug>/manage/', views.course_content_manage, name= 'course_content_manage'),
+    path('<slug:course_slug>/', views.course_detail, name= 'course_details'),
+    path('', views.course_list, name= 'course_list'),
+#     path('<slug:course_slug>/manage/', views.course_content_manage, name= 'course_content_manage'),
     
 ]

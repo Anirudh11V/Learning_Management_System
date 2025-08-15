@@ -1,0 +1,67 @@
+<nav class="navbar navbar-dark bg-dark border-bottom border-body fixed-top">
+    
+    <div class="container-fluid">
+        
+        <h1 class="navbar-brand">Learning Management System</h1>
+        <h6 class="navbar-brand">Welcome - {{request.user.username}}</h6>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
+                                        aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" 
+                                                        aria-labelledby="offcanvasDarkNavbarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">LMS</h5>
+                <button class="btn-close btn-close-white" type="button" data-bs-dismiss="offcanvas" 
+                        aria-label="Close"></button>
+            </div>
+              
+            <div class="offcanvas-body">
+                
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                        <a href="{% url 'courses:course_list' %}" class="nav-link">
+                            Courses</a>
+                    </li>
+                {% if request.user.is_authenticated %}     
+                    {% if request.user.is_student %}
+
+                    <li class="nav-item">
+                        <a href="{% url 'users:student_dashboard' %}" class="nav-link">
+                            My Learning</a>
+                    </li>
+
+                    {% elif request.user.is_instructor %}
+
+                    <li class="nav-item">
+                        <a href="{% url 'users:instructor_dashboard' %}" class="nav-link">
+                            My Dashboard</a>
+                    </li>
+
+                    {% endif %}
+
+                    <li class="nav-item">
+                        <a href="{% url 'users:profile' %}" class="nav-link">
+                            Profile</a>
+                        <a href="{% url 'users:logout' %}" class="nav-link">
+                            Logout</a>
+                    </li>
+                    
+                {% else %} 
+
+                    <li class="nav-item">
+                        <a href="{% url 'users:register' %}" class="nav-link">
+                            Register</a>
+                        <a href="{% url 'users:login' %}" class="nav-link">
+                            Login</a>
+                    </li>
+
+                </ul>
+                {% endif %}
+            </div>
+            
+        </div>
+    </div>
+</nav>

@@ -1,7 +1,11 @@
 {% extends 'main.html' %}
 {% load static %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
 {% block content %}
-<title>LMS- {{page_title}}</title>
 
 <main>
     <section>
@@ -51,53 +55,37 @@
             <h2>Course Content</h2>
 
             {% if course.instructor == request.user %}
-                <p><a href="{% url 'courses:module_create' course.slug %}">Add New Module</a></p>
-            {% endif %}
 
-            {% if modules %}
-            {% for module in modules %}
-            <div class="module_item">
-                <h3>Module {{module.order}}: {{module.title}}</h3>
-                
-                <p>{{module.description}}</p>
+                {% include "partials/instructor_course_management.html" %}
 
-                {% if course.instructor == request.user %}
-                    <p>
-                        <a href="{% url 'courses:module_update' course.slug module.slug %}">Edit</a>
-                        <a href="{% url 'courses:module_delete' course.slug module.slug %}">delete</a>
+            {% else %}
 
-                        <a href="{% url 'courses:lesson_create' course.slug module.slug %}">Add New Lesson</a>
-                    </p>
-                {% endif %}
+                {% for module in modules %}
+                    <h3>Module {{module.order}}: {{module.title}}</h3>
+                        
+                    <p>{{module.description}}</p>
 
-                {% if module.lesson.all %}
-                <h4>Lessons: </h4>
-                <ul>
-                    {% for lesson in module.lesson.all %}
-                    <li class="lesson_item">
-                        <a href="{% url 'courses:lesson_details' course.slug module.slug lesson.slug %}">
-                            {{lesson.order}}, {{lesson.title}} 
-                            ({{lesson.get_content_type_display}})
-                        </a>
+                    {% if module.lesson.all %}
+                        <h4>Lessons: </h4>
+                        <ul>
+                            {% for lesson in module.lesson.all %}
+                                <li class="lesson_item">
+                                    <a href="{% url 'courses:lesson_details' course.slug module.slug lesson.slug %}">
+                                        {{lesson.order}}, {{lesson.title}} 
+                                        ({{lesson.get_content_type_display}})
+                                    </a>
 
-                        {% if course.instructor == request.user %}
-                            <p>
-                                <a href="{% url 'courses:lesson_update' course.slug module.slug lesson.slug%}">Edit</a>
-                                <a href="{% url 'courses:lesson_delete' course.slug module.slug lesson.slug%}">delete</a>
-                            </p>
-                        {% endif %}
+                                    {% if lesson.content_type == 'quiz' %}
+                                        (Quiz)
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% empty %}
+                    <p>No lessons in this Module yet.</p>
+                {% endfor %}
 
-                        {% if lesson.content_type == 'quiz' %}
-                        (Quiz)
-                        {% endif %}
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                <p>No lessons in this Module yet.</p>
-                {% endif %}
-            </div>
-            {% endfor %}
             {% endif %}
         </div>
     </section>

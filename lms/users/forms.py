@@ -1,7 +1,8 @@
-from typing import Any
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import MemberUser
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
+
+from django.contrib.auth import get_user_model
+from .models import MemberUser, Profile
 
 
 class MemberUserCreation(UserCreationForm):
@@ -27,3 +28,21 @@ class MemberUserChangeForm(UserChangeForm):
     class Meta:
         model = MemberUser
         fields = '__all__'
+
+
+User = get_user_model()
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['bio']
+
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    pass

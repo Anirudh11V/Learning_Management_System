@@ -6,6 +6,10 @@
     <section>
         <div class="container">
             <p>
+                You are viewing lesson **{{lesson.order}}** of **{{lesson.module.lesson.count}}**
+            </p><hr>
+
+            <p>
                 <a href="{% url 'courses:course_details' course.slug %}">&laquo; Back to {{course.title}}</a>
                 <h1>Lesson : {{lesson.order}}: {{lesson.titile}}</h1>
                 <p>Module: {{module.title}}</p>
@@ -64,9 +68,17 @@
                     </form>
                 {% endif %}
             </div>
+
             <div class="nav_links">
-                <a href="#">&larr; Previous Lesson</a>
-                <a href="#">&larr; Next Lesson</a>
+                {% if previous_lesson %}
+                    <a href="{% url 'courses:lesson_details' course.slug module.slug previous_lesson.slug %}">
+                        &larr; Previous Lesson</a>
+                {% endif %}
+
+                {% if next_lesson %}
+                    <a href="{% url 'courses:lesson_details' course.slug module.slug next_lesson.slug %}">
+                        &larr; next Lesson</a>
+                {% endif %}
             </div>
         </div>
     </section>

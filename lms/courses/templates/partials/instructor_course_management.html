@@ -1,0 +1,44 @@
+
+{% block content %}
+    {% comment %}
+        This partial template conatins all the management links for an instructor.
+        It is included in course_details.html to keep the main template clean.
+    {% endcomment %}
+    <hr>
+
+    <div class="instructor_manage">
+        <h3>Course management Tools</h3>
+        <p>
+            <a href="{% url 'courses:course_update' course.slug %}">Edit Course</a> | 
+            <a href="{% url 'courses:course_delete' course.slug %}">Delete Course</a>
+        </p>
+
+        <h3>Modules & Lessons</h3>
+        <p>
+            <a href="{% url 'courses:module_create' course.slug %}">Add New module</a>
+        </p>
+        {% for module in course.modules.all %}
+            <div class="module_manage">
+                <h5>{{module.title}}</h5>
+                <p>
+                    <a href="{% url 'courses:module_update' course.slug module.slug %}">Edit Module</a> | 
+                    <a href="{% url 'courses:module_delete' course.slug module.slug%}">Delete Module</a> | 
+                    <a href="{% url 'courses:lesson_create' course.slug module.slug %}">Add New Lesson</a>
+                </p>
+                <ul>
+                    {% for lesson in module.lesson.all %}
+                        <li>
+                            {{lesson.title}}
+                            <a href="{% url 'courses:lesson_update' course.slug module.slug lesson.slug%}">
+                                Edit Lesson
+                            </a> | 
+                            <a href="{% url 'courses:lesson_delete' course.slug module.slug lesson.slug %}">
+                                Delete Lesson
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

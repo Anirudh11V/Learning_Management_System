@@ -13,41 +13,9 @@
 
 </head>
 <body>
-    <header><br>
-        <nav>
-            <h2>Learning Management System</h2>
-            <div id="nav">
-                
-                <a href="{% url 'courses:course_list' %}" class="btn btn-outline-success" type="block">Courses</a>
-                {% if request.user.is_authenticated %}
-
-                    {% if request.user.is_student %}
-                    <span>
-                        <a href="{% url 'users:student_dashboard' %}" class="btn btn-outline-info">My Learning</a>
-
-                    {% elif request.user.is_instructor %}
-
-                        <a href="{% url 'users:instructor_dashboard' %}" class="btn btn-outline-info">My Dashboard</a>
-                    </span>
-
-                    {% endif %}
-
-                <span>
-                    <a href="{% url 'users:profile' %}" class="btn btn-outline-primary">Profile</a>
-                    <a href="{% url 'users:logout' %}" class="btn btn-outline-warning">Logout</a>
-                </span>
-
-                {% else %} 
-
-            
-                <a href="{% url 'users:register' %}" class="btn btn-outline-primary">Register</a>
-                <a href="{% url 'users:login' %}" class="btn btn-outline-primary">Login</a>
-            
-
-                {% endif %}
-            </div>
-        </nav><br>
-    </header>
+    <header>
+        {% include 'nav.html' %}
+    </header><br><hr><br>
     
     <main>
         {% if messages %}

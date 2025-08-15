@@ -8,13 +8,13 @@ for managing online course, modules, lessons. It supports distinct user roles (s
 and basic lesson content delivery and tracking.
 
 	This project was developed as a learning exercise to solidify concepts in Django web development, including : 
--Custom user models and authentication,
--Model relationships,
--Function_based views,
--URL routing and namespacing,
--Django forms and Form validations,
--Database management,
--Basic templates and user interface.
+	-Custom user models and authentication,
+	-Model relationships,
+	-Function_based views,
+	-URL routing and namespacing,
+	-Django forms and Form validations,
+	-Database management,
+	-Basic templates and user interface.
 
 
 Features.
@@ -57,8 +57,12 @@ Technologies Used.
 		-sqlite3 
 		
 	-Frontend-
-		-Html5,
+		-Html5
 		-CSS3
+		-Bootstrap
+	
+	-Tool
+		-Docker
 
 
 Getting Started.
@@ -67,7 +71,8 @@ Getting Started.
 	
 	-Prerequisites-
 		-python 3.8+
-		-pyhton (pyhton package installer)
+		-python (python package installer)
+		-Docker
 		
 	-Installation-
 		1. Clone the repository : bash
@@ -91,12 +96,32 @@ Getting Started.
 		5. Create superuser : 
 			- py manage.py createsuperuser
 			
-	-Running Applications-
-		1. Start Django development server.
-			-py manage.py runserver
+		-Running Applications-
+			1. Start Django development server.
+				-py manage.py runserver
+				
+			2. Access the application.
+				-Open your web browser and go to "http://127.0.0.1:8000/"
+
+					(or)
+
+		1. Clone the repository : bash
+			git clone https://github.com/Anirudh11V/Learning_Management_System.git 
+			cd lms
 			
-		2. Access the application.
-			-Open your web browser and go to "http://127.0.0.1:8000/"
+		2. Create a .env file in the root directory of the project. Add the necessary environment variables for django and postgresql
+				(e.g., SECRET_KEY, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, etc).
+				
+		3. Build the docker container.
+			docker-compose up --build
+			
+			* This command will build the images, create the services and start the application, database.
+			
+		4. Run database migrations.
+			docker-compose exec web python manage.py makemigrations
+			docker-compose exec web python manage.py migrate
+			
+			* Open new terminal and run the migrations inside the web container.
 			
 
 Usage.
@@ -108,7 +133,7 @@ Usage.
 		-Create Courses: Go to courses -> Click add Courses, fill in details, set is_published= True.
 		-Add modules and lessons: From a course detail page in the admin , you can add Modules (related to the Course) and
 			then Lessons (related to Modules). Ensure lessons are is_published= True.
-		-Create Instructor account: Go to Users -> ManageUsers. Add a new user or edit an existing one, and check the is_instructor checkbox.
+		-Create Instructor account: Go to Users -> ManageUsers. Add a new user or edit an existing one, and check the	is_instructor checkbox.
 		
 	-Student user flow.
 		1.Register: Go to http://127.0.0.1:8000/accounts/register/ to create a new student account.
@@ -118,11 +143,20 @@ Usage.
 		5.Enroll: on the course details page, if not already enrolled, click enroll now.
 		6.Access lessons: once enrolled, click on any lesson within the course to view its content.
 		7.Mark compelete: you can find a button within the lesson details to mark it as compelete.
+		8.My Learning Dashboard: Students can view their enrolled courses in here.
+		9.Profile: Users details and user can reset their password from here. 
 		
 	-Instructor user flow.
 		1.Login: login with an instructor account at http://127.0.0.1:8000/.
 		2.Browse course: instructor can view course details, but they cannot enroll in course.
-		3.(future): dedicated instructor dashboard for managing their own courses.
+		3.My Dashboard: Dedicated instructor dashboard for managing their own courses.
+		4.Course create: click on Add new course in instructor dashboard and fill up details, set is_published= True.
+		5.Module create: After creation of course now in course user can see a button to Add new module.
+			After module created instructor have access to Edit/Delete/Add new lesson for every module.
+		6.Lesson create: By clicking on Add new lesson button below module, can create lesson. Ensure lessons are is_published= True.
+			After lesson created instructor have access to Edit/Delete/ for every lesson.
+			Lesson content accepts text/file/video url.
+		7.Profile: Users details and user can reset their password from here.
 		
 
 Project Structure.
@@ -140,7 +174,14 @@ Project Structure.
 |		|--course_list.html
 |		|--course_detail.html
 |		|--lesson_detail.html
+|		|--course_form.html
+|		|--course_confirm_delete.html
+|		|--module_form.html
+|		|--module_confirm_delete.html
+|		|--lesson_form.html
+|		|--lesson_confirm_delete.html
 |	|--admin.py
+|	|--forms.py
 |	|--models.py
 |	|--urls.py
 |	|--views.py
@@ -152,6 +193,11 @@ Project Structure.
 |		|--register.html
 |		|--profile.html
 |		|--stu_dashboard.html
+|		|--ins_dashboard.html
+|		|--password_reset_form.html
+|		|--password_reset_done.html
+|		|--password_reset_confirm.html
+|		|--password_reset_complete.html
 |	|--admin.py
 |	|--forms.py
 |	|--models.py
@@ -192,14 +238,18 @@ Project Structure.
 |---templates
 |	|--main.html 
 |
+|--.dockerignore
+|--.env
+|--Dockerfile
+|--docker-compose.yml
+|--manage.py
 |---requirements.txt
 |---README.md
 
 
 Future Enhancements.
 		
-	-Dedicated instructor dashboard: A seperate interface for instructors to manage their courses, view student progress, and
-		interact with students.
+	-In instructor dashboard: A seperate interface for instructors to view student progress, and interact with students.
 	
 	-Payment gateway integrations: Implement a real payment gateway for paid course.
 	
@@ -234,4 +284,4 @@ License.
 Contact.
 
 	- Anirudh - anirudh11v@gmail.com .
-	-project link: https://github.com/Anirudh11V/Learning_Management_System.git   .
+	- project link: https://github.com/Anirudh11V/Learning_Management_System.git   .

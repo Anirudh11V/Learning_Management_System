@@ -62,7 +62,7 @@ class Module(models.Model):
     slug = models.SlugField(max_length= 50, blank= True)
     title = models.CharField(max_length= 50)
     description = models.TextField(blank= True, null= True)
-    order = models.PositiveIntegerField(default= 0, blank= False, null= False)
+    order = models.PositiveIntegerField(default= 1, blank= False, null= False)
 
     class Meta:
         ordering = ['order']
@@ -91,7 +91,7 @@ class Lesson(models.Model):
     text_content = models.TextField(blank= True, null= True)
     video_url = models.URLField(max_length= 250, blank= True, null= True)
     file_upload = models.FileField(blank=True, null= True)
-    order = models.PositiveIntegerField(blank= False, null= False, default= 0)
+    order = models.PositiveIntegerField(blank= False, null= False, default= 1)
     created_at = models.DateTimeField(auto_now_add= True)
     updated_at = models.DateField(auto_now= True)
     is_published = models.BooleanField(default= False)

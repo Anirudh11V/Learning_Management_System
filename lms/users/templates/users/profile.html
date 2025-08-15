@@ -2,48 +2,63 @@
 {% load static %}
 {% block content %}
 
-<main id="profile">
-    <!-- <section>
-        <div class="container">
-            <h1>{{page_title}}</h1>
-            
-            <div class="profile_info">
-                <p><strong>Username : </strong>{{user.username}}</p>
-                <p><strong>Email : </strong>{{user.email}}</p>
-                <p><strong>Full Name : </strong>{{user.get_full_name|default:"Not set"}}</p>
-                <p><strong>Student : </strong>{% if request.user.is_student %}YES{% else %}No{% endif %}</p>
-                <p><strong>Instructor : </strong>{% if request.user.is_instructor %}YES{% else %}No{% endif %}</p>
-                <p><strong>Date Joined : </strong>{{user.date_joined|date:"M d, Y"}}</p>
-            </div>
+{% block title %}
+    {{page_title}}
+{% endblock title %}
 
-            <div class="action_link">
-                <a href="{% url 'courses:course_list' %}">Back to course</a> <br>
+<main>
 
-                <form action="{% url 'users:logout' %}" method="post" class="btn btn">{% csrf_token %}
-                    <button class="action_link_a_logout-btn" type="submit">Logout</button>
-                </form>
-            </div>
-        </div>
-    </section> -->
     <section>
-        <h1>Your profile</h1>
-        <p>Username : {{request.user.username}}</p>
-        <p>Email : {{request.user.email}}</p>
-        <p>Change Password : <a href="{% url 'password_reset' %}">Click Here...</a></p>
+        <div>
+            <h2>{{request.user.username}}'s Profile</h2>
+            <p>Bio : {{request.user.profile.bio}}</p>
 
-        {% if request.user.is_student %}
-            <p>You are a student.</p>
-            <a href="{% url 'users:student_dashboard' %}">Go to My Learning Dashboard.</a>
-        {% endif %}
+            <div>
+                <h3>Account Details</h3>
+                <form action="" method="post"> {% csrf_token %}
+                    <h4>Personal information</h4>
+                    {{user_form.as_p}}
+                    <button type="submit" name="update_user">Update Details</button>
+                </form>
+            </div><hr>
 
-        {% if request.user.is_instructor %}
-            <p>You are a instructor.</p>
-            <a href="{% url 'users:instructor_dashboard' %}">Instructor dashboard.</a>
-        {% endif %}
+            <div>
+                <form action="" method="post"> {% csrf_token %}
+                    <h4>About Me</h4>
+                    {{profile_form.as_p}}
+                    <button type="submit" name="update_profile">Update Profile</button>
+                </form>
+            </div><hr>
 
-        <a href="{% url 'users:logout' %}">Logout</a>
+            <div>
+                <h3>Change Password</h3>
+                <form action="" method="post"> {% csrf_token %}
+                    {{password_form.as_p}}
+                    <button type="submit" name="change_password">Change Password</button>
+                </form>
+            </div><hr>
+
+            {% if request.user.is_authenticated %}
+                <h4>My Course (as Instructor)</h4>
+                {% for course in instructor_course %}
+                    <p>
+                        <a href="{% url 'courses:course_details' course.slug %}">{{course.title}}</a>
+                    </p>
+                {% empty %}
+                    <p>You haven't created any course yet.</p>
+                {% endfor %}
+                    
+                <h4>My Course (as Student)</h4>
+                {% for enrolled in enrolled_course %}
+                    <p>
+                        <a href="{% url 'courses:course_details' enrolled.course.slug %}">{{enrolled.course.title}}</a>
+                    </p>
+                {% empty %}
+                    <p>You are not enrolled in any course yet.</p>
+                {% endfor %}
+            {% endif %}
+        </div>
     </section>
-
 </main>
 
 {% endblock content %}
