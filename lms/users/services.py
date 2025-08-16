@@ -1,0 +1,24 @@
+from .models import Notification
+from courses.models import Course, Lesson
+from enrollment.models import Enroll
+
+
+def create_notification(user, message, related_course= None, related_lesson= None):
+    Notification.objects.create(
+        user= user,
+        message= message,
+        related_course= related_course,
+        related_lesson= related_lesson,
+    )
+
+
+def notify_new_lesson(new_lesson, course):
+    enrolled_user = [course_enrollment.student for course_enrollment in Enroll.objects.filter(course= course)]
+    message = f"A new lesson '{new_lesson.title}' has been added to this course '{course.title}'."
+    for user in enrolled_user:
+        create_notification(user= user, message= message, related_lesson= new_lesson)
+
+
+def notify_new_enrollment(student, course):
+    message = f"A new student '{student.username}' has been enrolled in your course '{course.title}'."
+    create_notification(user= course.instructor, message= message, related_course= course)

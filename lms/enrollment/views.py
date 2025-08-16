@@ -5,6 +5,7 @@ from django.db import IntegrityError
 
 from courses.models import Course
 from .models import Enroll
+from users.services import notify_new_enrollment
 
 # Create your views here.
 
@@ -30,6 +31,7 @@ def enroll_course(request, course_slug):
                 messages.info(request, f"Payment simulation : please complete payment {course.price} for {course.title}")
 
             Enroll.objects.create(student= request.user, course= course)
+            notify_new_enrollment(request.user, course)
             messages.success(request, f"Successfully enrolled in {course.title}.")
             return redirect('courses:course_details', course_slug= course_slug)
         

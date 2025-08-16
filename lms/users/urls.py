@@ -10,4 +10,5 @@ urlpatterns = [
     path('profile/', views.profile, name= 'profile'),
     path('student_dashboard/', views.student_dashboard, name= 'student_dashboard'),
     path('instructor_dashboard/', views.Instructor_dashboard, name= 'instructor_dashboard'),
+    path('notifications/read/<int:pk>/', views.mark_notification_as_read, name= 'mark_notification_as_read'),
 ]

@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<div>
+    <h4 class="mb-3">My Notifications</h4>
+    <p class="text-muted">
+        You have {{unread_notifications_count}} unread notifications.
+    </p>
+
+    <div class="list-group">
+        {% for i in notifications %}
+            <a href="{{ i.get_absolute_url }}" 
+            class="list-group-item list-group-item-action {% if not i.is_read %}fw-bold{% endif %}">
+
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">{{i.message}}</h6>
+                <small class="text-muted">{{i.created_at|date:"F j, Y"}}</small>
+            </div>
+
+            </a>
+            {% empty %}
+                <p>You have no notifications yet.</p>
+        
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

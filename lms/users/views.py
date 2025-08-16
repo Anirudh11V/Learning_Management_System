@@ -1,15 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.db import IntegrityError
+from django.db.models import F
 from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 
 from .forms import MemberUserChangeForm, MemberUserCreation, UserUpdateForm, ProfileUpdateForm, PasswordChangeForm
-from .models import Profile
+from .models import Profile, Notification
 from enrollment.models import Enroll
 from courses.models import Course
 # Create your views here.
@@ -102,9 +102,28 @@ def profile(request):
     enrolled_course = Enroll.objects.filter(student= user)
     instructor_course = Course.objects.filter(instructor= user)
 
+    notifications = Notification.objects.filter(user= request.user).order_by('-created_at')
+
+    section = request.GET.get('section', 'info')
+    if section == 'notifications':
+        notifications.filter(is_read=False).update(is_read=True)
+
+    unread_notifications_count = notifications.filter(is_read=False).count()
+
     context ={'user_form': user_form, 'profile_form': profile_form, 'password_form': password_form, 
-              'enrolled_course': enrolled_course, 'instructor_course': instructor_course, 'page_title': 'profile'}
-    return render(request, 'users/profile.html', context)
+              'enrolled_course': enrolled_course, 'instructor_course': instructor_course, 'page_title': 'profile',
+              'notifications': notifications, 'unread_notifications_count': unread_notifications_count}
+    
+    section = request.GET.get('section', 'info')
+    if section == 'security':
+        template_name = 'partials/profile_security.html'
+    elif section == 'courses':
+        template_name = 'partials/profile_courses.html'
+    elif section == 'notifications':
+        template_name = 'partials/profile_notification.html'
+    else:
+        template_name = 'users/profile.html'
+    return render(request, template_name, context)
 
 
 @login_required(login_url= 'users:login')
@@ -137,3 +156,10 @@ def Instructor_dashboard(request):
 
     context = {'instructor_course': instructor_courses, 'page_title': 'Instructor Dashboard'}
     return render(request, 'users/ins_dashboard.html', context)
+
+
+def mark_notification_as_read(request, pk):
+    notification = get_object_or_404(Notification, pk= pk)
+    notification.is_read= True
+    notification.save()
+    return redirect(notification.get_absolute_url())

@@ -2,10 +2,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, Course, Module, Lesson
 from .forms import CourseForm, ModuleForm, LessonForm
 from enrollment.models import Enroll, UserLessonCompletion
+from users.services import notify_new_lesson
 
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.db import IntegrityError
+from django.db.models import Max
 from django.utils import timezone
 from django.contrib import messages
 from django.utils.text import slugify
@@ -284,7 +286,7 @@ def module_delete(request, course_slug, module_slug):    # Module deletion.
         module_title = module.title
         module.delete()
         messages.success(request, f"Module {module.title} deleted successfully.")
-        return redirect('users:instructor_dashboard')
+        return redirect('courses:course_details', course_slug= module.course.slug)
     
     context = {'course': module.course, 'page_title': f'Delete Module: {module.title}'}
     return render(request, 'courses/module_confirm_delete.html', context)
@@ -307,8 +309,12 @@ def lesson_create(request, course_slug, module_slug):    # Lesson creation.
             new_lesson = form.save(commit= False)
             new_lesson.module = module
             new_lesson.slug = slugify(new_lesson.title)
+            max_order = Lesson.objects.filter(module= module).aggregate(Max('order'))['order__max']
+            new_lesson.order = max_order + 1 if max_order is not None else 1
             new_lesson.save()
+            
             messages.success(request, f"Lesson '{new_lesson.title}' added successfully.")
+            notify_new_lesson(new_lesson, course)
             return redirect('courses:course_details', course_slug= course.slug)
         
     else:
