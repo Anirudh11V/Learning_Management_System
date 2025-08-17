@@ -1,12 +1,13 @@
 from django import forms
-from . models import Course, Module, Lesson
+from . models import Course, Module, Lesson, Comment
 
 
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['title', 'description', 'price', 'is_published']
+        fields = ['thumbnail', 'title', 'description', 'price', 'is_published']
         labels = {
+            'thumbnail': 'Course Thumbnail',
             'title': 'Course title',
             'description': 'Course Description',
             'price': 'Price(Rs)',
@@ -52,3 +53,9 @@ class LessonForm(forms.ModelForm):
             'text_content': forms.Textarea(attrs= {'rows': 8}),
             'order': forms.NumberInput(attrs= {'placeholder': 'Enter a number'}),
         }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model= Comment
+        fields = ['content']

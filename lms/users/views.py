@@ -75,7 +75,7 @@ def profile(request):
     user = request.user
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance= user)
-        profile_form = ProfileUpdateForm(request.POST, instance= user.profile)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance= user.profile)
         password_form = PasswordChangeForm(data= request.POST, user= user )
 
         if 'update_user' in request.POST and user_form.is_valid():

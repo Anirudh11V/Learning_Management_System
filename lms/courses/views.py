@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, Course, Module, Lesson
-from .forms import CourseForm, ModuleForm, LessonForm
+from .forms import CourseForm, ModuleForm, LessonForm, CommentForm
 from enrollment.models import Enroll, UserLessonCompletion
 from users.services import notify_new_lesson
 
@@ -88,7 +88,9 @@ def lesson_detail(request, course_slug, module_slug, lesson_slug):
     lesson_completion, created = UserLessonCompletion.objects.get_or_create(
         student= request.user, lesson= lesson, defaults= {'is_completed': False}
     )
-
+    """
+    Lesson nagivation...
+    """
     lesson_in_module = module.lesson.all().order_by('order')
 
     lesson_list = list(lesson_in_module)
@@ -102,8 +104,28 @@ def lesson_detail(request, course_slug, module_slug, lesson_slug):
     if current_lesson_index < len(lesson_list) - 1:
         next_lesson = lesson_list[current_lesson_index + 1]
 
+    # lesson navigation ends
+        
+    """
+    Comments...
+    """
+    comments = lesson.comments.all()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            new_comment = form.save(commit= False)
+            new_comment.lesson = lesson
+            new_comment.author = request.user
+            new_comment.save()
+            return redirect('courses:lesson_details', 
+                            course_slug= course.slug, module_slug= module.slug, lesson_slug= lesson.slug)
+    
+    else:
+        form = CommentForm()
+
     context= {'course': course, 'module': module, 'lesson': lesson, 'lesson_completion': lesson_completion, 
-              'page_title': lesson.title, 'previous_lesson': previous_lesson, 'next_lesson': next_lesson}
+              'page_title': lesson.title, 'previous_lesson': previous_lesson, 'next_lesson': next_lesson,
+              'form': form, 'comments': comments}
     return render(request, 'courses/lesson_detail.html', context)
 
 # ----------------------------------------------------------------------------------------.
@@ -156,7 +178,7 @@ def course_create(request):                 # Course creation.
         return redirect('users:instructor_dashboard')
     
     if request.method == 'POST':
-        form = CourseForm(request.POST)
+        form = CourseForm(request.POST, request.FILES)
         if form.is_valid():
             new_course = form.save(commit= False)
             new_course.instructor = request.user
@@ -186,7 +208,7 @@ def course_update(request, course_slug):    # Course edit/updating.
         if form.is_valid():
             form.save()
             messages.success(request, f"Course '{course.title}' updated successfully.")
-            return redirect('users:instructor_dashboard')
+            return redirect('courses:course_details', course_slug= course.slug)
         else:
             messages.error(request, 'Please correct the errors.')
 
@@ -207,7 +229,7 @@ def course_delete(request, course_slug):     # Course deletion.
         course_title = course.title
         course.delete()
         messages.success(request, f"Course '{course.title}' deleted successfully.")
-        return redirect('users:instructor_dashboard')
+        return redirect('courses:course_list')
     
     context = {'course': course, 'page_title': f'Delete Course: {course.title}'}
     return render(request, 'courses/course_confirm_delete.html', context)
@@ -304,7 +326,7 @@ def lesson_create(request, course_slug, module_slug):    # Lesson creation.
         return redirect('users:instructor_dashboard')
     
     if request.method == 'POST':
-        form = LessonForm(request.POST)
+        form = LessonForm(request.POST, request.FILES)
         if form.is_valid():
             new_lesson = form.save(commit= False)
             new_lesson.module = module

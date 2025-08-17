@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 from django.urls import reverse
+
+from django.contrib.auth import get_user_model
 # Create your models here.
 
 class Category(models.Model):
@@ -36,7 +38,7 @@ class Course(models.Model):
                                    related_name= 'taught_courses')   
     
     price = models.DecimalField(max_digits= 7, decimal_places= 2, default= 0.00)
-    thumbnail = models.ImageField(blank= True, null= True)
+    thumbnail = models.ImageField(blank= True, null= True, upload_to= 'course_thumbnails/')
     created_at = models.DateTimeField(auto_now_add= True)
     updated_at = models.DateField(auto_now= True)
     is_published = models.BooleanField(default= False)
@@ -90,7 +92,7 @@ class Lesson(models.Model):
     
     text_content = models.TextField(blank= True, null= True)
     video_url = models.URLField(max_length= 250, blank= True, null= True)
-    file_upload = models.FileField(blank=True, null= True)
+    file_upload = models.FileField(blank=True, null= True, upload_to= 'lesson_files/')
     order = models.PositiveIntegerField(blank= False, null= False, default= 1)
     created_at = models.DateTimeField(auto_now_add= True)
     updated_at = models.DateField(auto_now= True)
@@ -112,3 +114,16 @@ class Lesson(models.Model):
         return reverse('lesson_detail', args=[self.module.course.slug, self.module.slug, self.slug])
     
 
+User = get_user_model()
+
+class Comment(models.Model):
+    lesson = models.ForeignKey(Lesson, on_delete= models.CASCADE, related_name= 'comments')
+    author = models.ForeignKey(User, on_delete= models.CASCADE, related_name= 'comments')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add= True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Comments by {self.author.username} on {self.lesson.title}."

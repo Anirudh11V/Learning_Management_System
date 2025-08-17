@@ -23,7 +23,7 @@
             </div><hr>
 
             <div>
-                <form action="" method="post"> {% csrf_token %}
+                <form action="" method="post" enctype="multipart/form-data"> {% csrf_token %}
                     <h4>About Me</h4>
                     {{profile_form.as_p}}
                     <button type="submit" name="update_profile">Update Profile</button>

@@ -81,6 +81,37 @@
                 {% endif %}
             </div>
         </div>
+    </section><br>
+
+    <section>
+        {% if comments %}
+            <div class="container">
+                <h4>Comments</h4>
+                <div class="list-group">
+                    {% for c in comments %}
+                        <div class="list-group-item list-group-item-action flex-column align-items-start">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">
+                                    {{c.author.username}}
+                                </h6>
+                                <small class="text-muted">
+                                    {{c.created_at|date:"F j, Y"}}
+                                </small>
+                            </div>
+                            <p class="mb-1">{{c.content}}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div><br>
+        {% endif %}
+
+        <div class="container">
+            <h4>Leave a Comment</h4>
+            <form action="" method="post"> {% csrf_token %}
+                {{form.as_p}}
+                <button type="submit" class="btn-primary">Submit Comment</button>
+            </form>
+        </div>
     </section>
 </main>
 
