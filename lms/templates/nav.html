@@ -4,15 +4,12 @@
     <div class="container-fluid">
         
         <h1 class="navbar-brand">Learning Management System</h1>
-        <h6 class="navbar-brand">Welcome - {{request.user.username}}</h6>
-
-        
 
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
                                         aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         
-        {% if unread_notifications_count > 0 %}
+        {% if unread_notifications_count == 0 %}
             <span class="badge bg-danger rounded-pill">
                 {{unread_notifications_count}}
             </span>
@@ -27,7 +24,7 @@
                     <a href="{% url 'users:profile' %}?section=notifications " class="nav-link">
                         LMS
                     </a>
-                    {% if unread_notifications_count >= 0 %}
+                {% if unread_notifications_count >= 0 %}
                     <span class="badge bg-danger rounded-pill">
                         {{unread_notifications_count}}
                     </span>

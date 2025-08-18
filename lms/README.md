@@ -16,32 +16,39 @@ and basic lesson content delivery and tracking.
 	-Database management,
 	-Basic templates and user interface.
 
+Project Status:
+	This project is in active development. The core functionality is in place, allowing instructor to create courses and students to enroll and complete lessons.
+
+	Core LMS Feature : Fully functional.
+	Quiz System : Backend models are complete; frontend view and quiz taking logics are future enhancements.
+	Discussion & Core apps : Scaffolding exixts, but these apps are planned for future implementations.
+
 
 Features.
 
 	-User authentication and roles-
-		-Student registration and login,
-		-Separate roles for students and instructor,
-		-Instructor accounts are created by admin for security.
+		-Student registration and login system.
+		-Separate permission based role for students and instructor.
+		-Instructor Request Workflow: 
+			Users can request to became an instructor during registration. An admin must approve the request before instructor privileges are granted.
 		
-	-Course management-
-		-Browse a list of available course,
-		-view detailed course informations,
-		-Courses can be published / unpublished.
+	-Course & COntent management-
+		-Instructor can create, update and delete their course through a dedicated dashboard.
+		-Courses are organized into modules, which in turn contain individual lessons.
+		-Support for multiple lesson content type, including text, video urls, files.
 		
-	-Modules and lessons structure-
-		-Courses are organized into modules,
-		-Modules contains individual lessons.
-		-Lessons can have various content type ( texts, videos, files ).
+	-Enrollment & Progress tracking-
+		-Students can browse and enroll in published courses.
+		-Prevents students from enrolling in the same course multiple times.
+		-Students can mark individual lesson as complete to track their learning progress.
+
+	-In App Notification-
+		-Instructor receive a notification when a new student enroll in their course.
+		-Student receive a notification when a new lesson added to a course they are enrolled in.
+		-Admin are notified when a user request instructor privileges.
 		
-	-Enrollment System-
-		-Logged_in student can enroll in course,
-		-Prevents enroll in same course,
-		
-	-Lesson progress tracking-
-		-Students can view lesson content,
-		-Students can mark individual lesson as complete,
-		-Track lesson completion status per student.
+	-Lesson interaction-
+		-A simple commenting system allows students to post comments on each lesson.
 		
 	-Django admin integrations-
 		-Full adminstration interface for managing users, courses, modules, lessons and enrollment.
@@ -72,7 +79,7 @@ Getting Started.
 	-Prerequisites-
 		-python 3.8+
 		-python (python package installer)
-		-Docker
+		-Docker (optional for containerized setup)
 		
 	-Installation-
 		1. Clone the repository : bash
@@ -129,11 +136,13 @@ Usage.
 	-Admin panel.
 		-Access the admin panel at "http://127.0.0.1:8000/admin/",
 		-Log in with your superuser credentials.
-		
-		-Create Courses: Go to courses -> Click add Courses, fill in details, set is_published= True.
-		-Add modules and lessons: From a course detail page in the admin , you can add Modules (related to the Course) and
-			then Lessons (related to Modules). Ensure lessons are is_published= True.
-		-Create Instructor account: Go to Users -> ManageUsers. Add a new user or edit an existing one, and check the	is_instructor checkbox.
+
+		-Approve Instructor Accounts:
+			Go to Users -> Member users. Filter by Instructor Request. Select a user, check the is_instructor checkbox ans save.
+
+		-Manage Content:
+			Create Courses: Go to courses -> Click add Courses, fill in details, set is_published= True.
+			Add modules and lessons: From a course detail page in the admin , you can add Modules (related to the Course) and then Lessons (related to Modules). Ensure lessons are is_published= True.
 		
 	-Student user flow.
 		1.Register: Go to http://127.0.0.1:8000/accounts/register/ to create a new student account.
@@ -160,92 +169,13 @@ Usage.
 		
 
 Project Structure.
+	This project is organized into several Django apps:
 
-|--lms						#Main django project setting.
-|	|--settings.py
-|	|--urls.py
-|	|--wsgi.py
-|---manage.py	
-|
-|--courses/					#Django app for course, module, lesson.
-|   |--migrations.py
-|	|--templates/courses/
-|		|--access_denied.html
-|		|--course_list.html
-|		|--course_detail.html
-|		|--lesson_detail.html
-|		|--course_form.html
-|		|--course_confirm_delete.html
-|		|--module_form.html
-|		|--module_confirm_delete.html
-|		|--lesson_form.html
-|		|--lesson_confirm_delete.html
-|	|--admin.py
-|	|--forms.py
-|	|--models.py
-|	|--urls.py
-|	|--views.py
-|
-|--users/					#Django app for Customuser model and authentication.
-|   |--migrations.py
-|	|--templates/users/
-|		|--login.html
-|		|--register.html
-|		|--profile.html
-|		|--stu_dashboard.html
-|		|--ins_dashboard.html
-|		|--password_reset_form.html
-|		|--password_reset_done.html
-|		|--password_reset_confirm.html
-|		|--password_reset_complete.html
-|	|--admin.py
-|	|--forms.py
-|	|--models.py
-|	|--urls.py
-|	|--views.py
-|
-|--enrollments/				#Django app for handling course enrollment and lesson progress.
-|   |--migrations.py
-|	|--admin.py
-|	|--models.py
-|	|--urls.py
-|	|--views.py
-|
-|--quiz/					#Django app for handling quiz.
-|   |--migrations.py
-|	|--admin.py
-|	|--models.py
-|	|--urls.py
-|	|--views.py
-|
-|--core/					#for (future).
-|   |--migrations.py
-|	|--admin.py
-|	|--models.py
-|	|--urls.py
-|	|--views.py
-|
-|--discussion/				# for (future).
-|   |--migrations.py
-|	|--admin.py
-|	|--models.py
-|	|--urls.py
-|	|--views.py
-|
-|---static/
-|	|--style.css
-|
-|---templates
-|	|--main.html 
-|
-|--.dockerignore
-|--.env
-|--Dockerfile
-|--docker-compose.yml
-|--manage.py
-|---requirements.txt
-|---README.md
-
+	courses: Manages courses, modules, lessons.
+	users: Handles the custom user model and authentication and profile.
+	enrollment: Manage course enrollment and tracks lesson completion.
+	quiz: Contains models of quizzes, questions and answers.
+	core & discussion: placeholder app for future development.
 
 Future Enhancements.
 		

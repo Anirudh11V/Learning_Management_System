@@ -3,24 +3,26 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm, Password
 
 from django.contrib.auth import get_user_model
 from .models import MemberUser, Profile
-
+from .services import notify_admin_insrtuctor_request
 
 class MemberUserCreation(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = MemberUser
         fields = UserCreationForm.Meta.fields + ('email', 'is_student', 'is_instructor')
-
-    def clean_is_instructor(self):
-        if self.cleaned_data.get('is_instructor'):
-            raise ValueError("You cant register as instructor.")
-        return False
     
     def save(self, commit= True):
         user = super().save(commit= False)
         user.is_student = True
         user.is_instructor = False
+
+        if self.cleaned_data.get('is_instructor'):
+            user.wants_to_be_instructor = True
+            user.is_student = False
+
         if commit:
             user.save()
+            if user.wants_to_be_instructor:
+                notify_admin_insrtuctor_request(user)
         return user
     
 

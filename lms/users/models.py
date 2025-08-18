@@ -12,6 +12,8 @@ class MemberUser(AbstractUser):
     is_student = models.BooleanField(default= False)
     is_instructor = models.BooleanField(default= False)
 
+    wants_to_be_instructor = models.BooleanField(default= False, verbose_name= 'Instructor Request')
+
     email = models.EmailField(_("email address"), unique=True)
     bio = models.TextField(null= True, blank= True)
     avatar = models.ImageField(null= True, blank= True)
