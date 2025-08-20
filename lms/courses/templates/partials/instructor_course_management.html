@@ -1,4 +1,4 @@
-
+{% load static %}
 {% block content %}
     {% comment %}
         This partial template conatins all the management links for an instructor.
@@ -21,7 +21,7 @@
             <div class="module_manage">
                 <h5>{{module.title}}</h5>
                 <p>
-                    <a href="{% url 'courses:module_update' course.slug module.slug %}">Edit Module</a> | 
+                    <a href="{% url 'courses:module_update' course.slug module.slug %}">Edit Module</a> |  
                     <a href="{% url 'courses:module_delete' course.slug module.slug%}">Delete Module</a> | 
                     <a href="{% url 'courses:lesson_create' course.slug module.slug %}">Add New Lesson</a>
                 </p>
@@ -36,6 +36,17 @@
                                 Delete Lesson
                             </a>
                         </li>
+                        <!-- Quiz -->
+                        {% if not lesson.quiz %}
+                                <a href="{% url 'quiz:quiz_create' lesson.id %}" class="btn btn-sm btn-primary">
+                                    Add Quiz
+                                </a>
+                            {% elif lesson.quiz %}
+                                <a href="{% url 'quiz:quiz_manage' lesson.quiz.id %}" class="btn btn-sm btn-secondary">
+                                    Manage Quiz
+                                </a>
+                        {% endif %}
+
                     {% endfor %}
                 </ul>
             </div>

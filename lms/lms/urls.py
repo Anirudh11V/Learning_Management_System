@@ -35,6 +35,9 @@ urlpatterns = [
     # courses app.
     path('courses', include('courses.urls')),
 
+    # Quiz app.
+    path('quiz/', include('quiz.urls')),
+
     # Django password reset urls.
     path('accounts/password_reset/', 
          auth_view.PasswordResetView.as_view(template_name= 'users/password_reset_form.html'),

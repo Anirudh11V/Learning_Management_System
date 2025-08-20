@@ -86,8 +86,9 @@ class Lesson(models.Model):
     slug = models.SlugField(max_length= 50, blank= True)
     content_type = models.CharField(max_length= 50,
                                     choices= [
-                                        ('text', 'Text content'), ('video', 'Video content'),
-                                        ('quiz', 'Quiz content'), ('file', 'File content'),
+                                        ('text', 'Text content'), 
+                                        ('video', 'Video content'),
+                                        ('file', 'File content'),
                                     ], default= 'text')
     
     text_content = models.TextField(blank= True, null= True)

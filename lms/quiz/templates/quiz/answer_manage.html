@@ -1,0 +1,76 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+{% block content %}
+
+<main>
+    <section>
+        <div class="container mt-4">
+            <div class="mb-4">
+                <h2>Manage Answers</h2>
+
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <p class="fs-5 mb-0">
+                            <strong>Question : </strong>
+                            {{question.text}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-7">
+                    <h4>Existing Answers : ({{answers.count}})</h4>
+                    <hr>
+                    {% if answers %}
+                        <ul class="list-group"> 
+                            {% for ans in answers %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center"> 
+                                    {{ans.text}}
+                                    
+                                    {% if ans.is_correct %}
+                                        <span class="badge bg-success">
+                                            Correct
+                                        </span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No answers have been added for this question yet.
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Add New Answer</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <form action="" method="post"> {% csrf_token %}
+                                {{answer_form.as_p}}
+                                <button type="submit" class="btn btn-primary w-100">Add Answer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{% url 'quiz:quiz_manage' question.quiz.id %}" class="btn btn-secondary">
+                    &laquo; Back to Quiz Management
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock content %}

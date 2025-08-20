@@ -1,0 +1,60 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+{% block content %}
+
+<main>
+    <section>
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+
+                        <div class="card-header">
+                            <h2>Start Quiz : {{quiz.title}}</h2>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="card-text">{{quiz.description}}</p>
+                            <hr>
+                            <ul class="list-group list-group-flush">
+
+                                <li class="list-group-item"> 
+                                    <strong>Course : </strong>{{quiz.lesson.module.course.title}}
+                                </li>
+
+                                <li class="list-group-item">
+                                    <strong>Lesson : </strong>{{quiz.lesson.title}}
+                                </li>
+
+                                <li class="list-group-item">
+                                    <strong>Time Limit : </strong>{{quiz.duration_minutes|default: "No limit"}} minutes
+                                </li>
+
+                                <li class="list-group-item">
+                                    <strong>Passing : </strong>{{quiz.pass_percentage}}
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="card-footer text-center">
+                            <form action="{% url 'quiz:quiz_start' quiz.id %}" method="post"> {% csrf_token %}
+                                <button type="submit" class="btn btn-success">Start Quiz Now</button>
+                                <a href="{% quiz.lesson.get_absolute_url %}" class="btn btn-secondary">
+                                    Back to Lesson
+                                </a>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock content %}

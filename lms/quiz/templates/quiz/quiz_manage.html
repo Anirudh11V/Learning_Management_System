@@ -1,0 +1,78 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+{% block content %}
+
+<main>
+    <section>
+        
+        <div class="container mt-4">
+            <div class="p-4 mb-4 bg-light rounded-3">
+                <div class="container-fluid py-3">
+                    <h1 class="display-5 fw-bold">{{quiz.title}}</h1>
+                    <p class="col-md-8 fs-5">{{quiz.description}}</p>
+                    <p class="text-muted">For Lesson : {{quiz.lesson.title}}</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-7">
+                    <h4>Existing Questions ({{questions.count}})</h4>
+                    <hr>
+                    {% if questions %}
+                        <ul class="list-group">
+                            {% for q in questions %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Q{{q.order}}: </strong>{{q.text|truncatechars:60}}<br>
+                                        <small class="text-muted">{{q.get_question_type_display}} |
+                                            {{q.marks}} mark
+                                        </small>
+                                    </div>
+
+                                    <div>
+                                        <a href="{% url 'quiz:answer_manage' q.id %}"
+                                            class="btn btn-info btn-sm ">
+                                            Manage Answers ({{q.answers.count}})
+                                        </a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="alert alert-info">
+                            No questions have been added to this quiz yet. Use the form to add the first one.
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Add New Question</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <form action="" method="post"> {% csrf_token %}
+                                {{question_form.as_p}}
+                                <button type="submit" class="btn btn-primary w-100">Add Question</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{% url 'courses:course_list' %}" class="btn btn-secondary">
+                    &laquo; Back
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock content %}
