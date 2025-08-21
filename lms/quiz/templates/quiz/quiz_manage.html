@@ -59,7 +59,7 @@
                         <div class="card-body">
                             <form action="" method="post"> {% csrf_token %}
                                 {{question_form.as_p}}
-                                <button type="submit" class="btn btn-primary w-100">Add Question</button>
+                                <button type="submit" class="btn btn-primary">Add Question</button>
                             </form>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
             </div>
 
             <div class="mt-4">
-                <a href="{% url 'courses:course_list' %}" class="btn btn-secondary">
+                <a href="{{quiz.lesson.module.course.get_absolute_url}}" class="btn btn-secondary">
                     &laquo; Back
                 </a>
             </div>

@@ -56,19 +56,6 @@ class Answer(models.Model):
 
     class Meta:
         verbose_name_plural = "Answers"
-
-    def clean(self):
-        if self.is_correct and self.question.question_type in ['mcq', 'true_false']:
-            existing_correct_answers = Answer.objects.filter(
-                question = self.question, is_correct= True
-            ).exclude(pk= self.pk)
-            if existing_correct_answers.exists():
-                raise ValidationError(" only one correct answer is allowed for Multiple choice and true/false question")
-        return super().clean
-    
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        return super().save(*args, **kwargs)
     
     def __str__(self):
         return f'{self.text} (correct : {self.is_correct})'
@@ -96,7 +83,7 @@ class QuizAttempt(models.Model):
         score = 0
         self.total_marks = self.quiz.get_total_marks()
 
-        for user_answer in self.user_ansers.all():
+        for user_answer in self.user_anwsers.all():
             if user_answer.question.question_type in ['mcq', 'true_false']:
                 if user_answer.selected_answer and user_answer.selected_answer.is_correct:
                     score += user_answer.question.marks
@@ -104,7 +91,6 @@ class QuizAttempt(models.Model):
                 pass
 
         self.score= score
-        self.save()
 
     def evaluate_pass_status(self):
         if self.is_completed and self.total_marks > 0:
@@ -115,7 +101,7 @@ class QuizAttempt(models.Model):
         self.save()
 
     def complete_attempts(self):
-        self.is_complete= True
+        self.is_completed= True
         self.completed_at= timezone.now()
         self.calculate_score()
         self.evaluate_pass_status()
@@ -123,7 +109,7 @@ class QuizAttempt(models.Model):
 
 
 class UserAnswer(models.Model):
-    attempt = models.ForeignKey(QuizAttempt, on_delete= models.CASCADE, related_name= 'user_answer')
+    attempt = models.ForeignKey(QuizAttempt, on_delete= models.CASCADE, related_name= 'user_answers')
     question = models.ForeignKey(Question, on_delete= models.CASCADE, related_name= 'user_responses')
     selected_answer = models.ForeignKey(Answer, on_delete= models.SET_NULL, 
                                         null= True, blank= True, related_name= 'user_selections')

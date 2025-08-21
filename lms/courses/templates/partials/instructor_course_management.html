@@ -37,15 +37,17 @@
                             </a>
                         </li>
                         <!-- Quiz -->
-                        {% if not lesson.quiz %}
-                                <a href="{% url 'quiz:quiz_create' lesson.id %}" class="btn btn-sm btn-primary">
+                        <div class="card-footer">
+                            {% if not lesson.quiz %}
+                                <a href="{% url 'quiz:quiz_create' lesson.id %}" class="btn btn-sm btn-primary w-50">
                                     Add Quiz
                                 </a>
                             {% elif lesson.quiz %}
                                 <a href="{% url 'quiz:quiz_manage' lesson.quiz.id %}" class="btn btn-sm btn-secondary">
                                     Manage Quiz
                                 </a>
-                        {% endif %}
+                            {% endif %}
+                        </div>
 
                     {% endfor %}
                 </ul>

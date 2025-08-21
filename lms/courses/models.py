@@ -55,7 +55,7 @@ class Course(models.Model):
         return self.title
     
     def get_absolute_url(self):
-        return reverse('course_detail', args= [self.slug])
+        return reverse('courses:course_details', args= [self.slug])
     
 
 class Module(models.Model):
@@ -112,7 +112,7 @@ class Lesson(models.Model):
         return f"{self.order}, {self.title} ({self.module.title})"
     
     def get_absolute_url(self):
-        return reverse('lesson_detail', args=[self.module.course.slug, self.module.slug, self.slug])
+        return reverse('courses:lesson_details', args=[self.module.course.slug, self.module.slug, self.slug])
     
 
 User = get_user_model()

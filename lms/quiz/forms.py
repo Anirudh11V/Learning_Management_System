@@ -1,6 +1,8 @@
 from django import forms
+from django.db.models.base import Model
 from .models import  Quiz, Question, Answer
 
+from django.core.exceptions import ValidationError
 
 class QuizForm(forms.ModelForm):
     class Meta:
@@ -39,10 +41,29 @@ class AnswerForm(forms.ModelForm):
             'text': 'Answer Text',
             'is_correct': 'Is this the correct answer?',
         }
+    
+    def __init__(self, *args, question= None, **kwargs):
+        self.question = question
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        is_correct = cleaned_data.get("is_correct")
+
+        if is_correct and self.question and self.question.question_type in ['mcq', 'true_false']:
+            existing_correct = self.question.answers.filter(is_correct= True).exclude(pk= self.instance.pk)
+            if existing_correct.exists():
+                raise ValidationError("Only one correct answer is allowed for this question type.")
+        return cleaned_data
+
+
+class AnswerChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj) -> str:
+        return obj.text
 
 
 class UserAnswerForm(forms.Form):
-    answer = forms.ModelChoiceField(
+    answer = AnswerChoiceField(
         queryset= Answer.objects.none(),
         widget= forms.RadioSelect,
         empty_label= None,

@@ -79,7 +79,7 @@ def answer_manage(request, question_id):
         return redirect('courses:course_details', course_slug= quiz.lesson.module.course.slug)
     
     if request.method == 'POST':
-        answer_form = AnswerForm(request.POST)
+        answer_form = AnswerForm(request.POST, question= question)
         if answer_form.is_valid():
             new_answer = answer_form.save(commit= False)
             new_answer.question = question
@@ -157,5 +157,9 @@ def quiz_results(request, attempt_id):
     if attempt.student != request.user:
         raise PermissionDenied("You can't view there results.")
     
-    context= {'attempt': attempt, 'page_title': f"Result for {attempt.quiz.title}"}
+    percentage_score = 0
+    if attempt.total_marks > 0:
+        percentage_score = (attempt.score / attempt.total_marks) * 100
+    
+    context= {'attempt': attempt, 'percentage_score':percentage_score, 'page_title': f"Result for {attempt.quiz.title}"}
     return render(request, 'quiz/quiz_results.html', context)

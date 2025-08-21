@@ -34,10 +34,8 @@
                         <h3>Your Score: {{attempt.score}}/{{attempt.total_marks}}</h3>
 
                         {% if attempt.total_marks > 0 %}
-                            {% load mathfilters %}
-                            {% with percentage_score=attempt.score|div:attempt.total_marks|mul:100 %}
-                                <p class="lead">You scored {{percentage_score|floatformat:2}}</p>
-                            {% endwith %}
+                            <p class="lead">You scored {{percentage_score|floatformat:2}}</p>
+                            <p class="text-muted">Passing Score Required :{{attempt.quiz.pass_percentage}}%</p>
                         {% else %}
                             <p class="lead">The quiz has no graded questions.</p>
                         {% endif %}
@@ -46,12 +44,12 @@
                     </div>
 
                     <div class="card-footer">
-                        <a href="{{attempt.quiz.lesson.get_absolute_url}}" class="btn btn-primary">
+                        <a href="{{attempt.quiz.lesson.get_absolute_url}}" class="btn btn-primary w-50">
                             Return to Lesson
                         </a>
 
                         <a href="{% url 'courses:course_details' attempt.quiz.lesson.module.course.slug %}" 
-                            class="btn btn-secondary">
+                            class="btn btn-secondary ">
                             Back to Course
                         </a>
                     </div>
@@ -61,16 +59,5 @@
         </div>
     </section>
 </main>
-
-<script>
-    // simple extension to django's build in template filters.
-    Number.prototype.div = function(b){
-        return this / b;
-    };
-
-    Number.prototype.mul = function(b){
-        return this * b;
-    };
-</script>
 
 {% endblock content %}

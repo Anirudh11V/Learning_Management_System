@@ -35,11 +35,15 @@
                                 </div>
 
                                 {% endfor %}
-                                <hr>
-                                <div class="d-grid gap-2">
-                                    <button type="submit" class="btn btn-primary">
+                    
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary w-50">
                                         Create Quiz and Add Qustions
                                     </button>
+
+                                    <a href="{{lesson.module.course.get_absolute_url}}" class="btn btn-secondary w-25">
+                                        &laquo; Back
+                                    </a>
                                     
                                 </div>
                             </form>
