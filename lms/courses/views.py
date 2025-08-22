@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, Course, Module, Lesson
 from .forms import CourseForm, ModuleForm, LessonForm, CommentForm
-from enrollment.models import Enroll, UserLessonCompletion
+from enrollment.models import Enroll
 from users.services import notify_new_lesson
+from quiz.models import QuizAttempt
+from users.models import UserLessonCompletion
 
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
@@ -236,21 +238,24 @@ def course_delete(request, course_slug):     # Course deletion.
 
 # ------------- COURSE CRUD ENDS ------------------------------------------------.
 
-# @login_required(login_url= 'users:login')
-# def course_content_manage(request):
-    # course = get_object_or_404(Course, slug= course_slug)
+@login_required(login_url= 'users:login')
+def course_manage(request, course_slug):
+    course = get_object_or_404(Course, slug= course_slug)
 
-    # if course.instructor != request.user:
-    #     messages.error(request, 'You are not authorized to manage this course.')
-    #     return redirect('users:instructor_dashboard')
+    if not request.user.is_instructor or course.instructor != request.user:
+        messages.error(request, "You are not authoried to manage this course.")
+        return redirect("users:instructor_dashboard")
     
-    # modules = Module.objects.filter(course= course).order_by('order')
+    enrollments = Enroll.objects.filter(course= course).select_related('student')
 
-    # for i in modules:
-    #     i.lesson_sorted = i.lesson.all().order_by('order')
+    quiz_attempts = QuizAttempt.objects.filter(
+        quiz__lesson__module__course= course
+    ).select_related('student', 'quiz').order_by('-started_at')
 
-    # context = {'course': course, 'modules': modules, 'page_title': f'Manage Content for "{course.title}".'}
-    # return render(request, 'courses/partials/instructor_course_management.html')
+    context= {'course': course, 'enrollments': enrollments, 'quiz_attempts': quiz_attempts,
+              'page_title': f"Manage: {course.title}"}
+
+    return render(request, 'courses/course_manage.html', context)
 
 # ------------- MODULE CRUD ------------------------------------------------.
 

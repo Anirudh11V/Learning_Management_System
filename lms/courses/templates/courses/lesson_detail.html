@@ -50,6 +50,18 @@
 
             </div>
 
+            <div class="nav_links">
+                {% if previous_lesson %}
+                    <a href="{% url 'courses:lesson_details' course.slug module.slug previous_lesson.slug %}">
+                        &larr; Previous Lesson</a>
+                {% endif %}
+
+                {% if next_lesson %}
+                    <a href="{% url 'courses:lesson_details' course.slug module.slug next_lesson.slug %}">
+                        &larr; next Lesson</a>
+                {% endif %}
+            </div><hr>
+
             <div class="mark_complete_section">
                 {% if lesson_completion.is_completed %}
                     <div class="completed_message">
@@ -63,38 +75,27 @@
                     </form>
                 {% endif %}
             </div>
-            <hr>
+        </div>
+    </section>
 
-            <div class="container mt-4">
-                {% if lesson.quiz and lesson.quiz.is_published %}
-                    <div class="card my-4">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                Quiz : {{lesson.quiz.title}}
-                            </h5>
-                            <p class="card-text">
-                                {{lesson.quiz.description}}
-                            </p>
+    <section>
+        <div class="container mt-4">
+            {% if lesson.quiz and lesson.quiz.is_published %}
+                <div class="card my-4">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            Quiz : {{lesson.quiz.title}}
+                        </h5>
+                        <p class="card-text">
+                            {{lesson.quiz.description}}
+                        </p>
 
-                            <form action="{% url 'quiz:quiz_start' lesson.quiz.id %}" method="post"> {% csrf_token %}
-                                <button type="submit" class="btn btn-success">Start Quiz</button>
-                            </form>
-                        </div>
+                        <form action="{% url 'quiz:quiz_start' lesson.quiz.id %}" method="post"> {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Start Quiz</button>
+                        </form>
                     </div>
-                {% endif %}
-            </div>
-
-            <div class="nav_links">
-                {% if previous_lesson %}
-                    <a href="{% url 'courses:lesson_details' course.slug module.slug previous_lesson.slug %}">
-                        &larr; Previous Lesson</a>
-                {% endif %}
-
-                {% if next_lesson %}
-                    <a href="{% url 'courses:lesson_details' course.slug module.slug next_lesson.slug %}">
-                        &larr; next Lesson</a>
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
         </div>
     </section><br>
 

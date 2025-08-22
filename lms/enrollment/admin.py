@@ -1,5 +1,6 @@
 from django.contrib import admin
-from enrollment.models import UserLessonCompletion, Enroll
+from enrollment.models import Enroll
+from users.models import UserLessonCompletion
 
 # Register your models here.
 @admin.register(Enroll)

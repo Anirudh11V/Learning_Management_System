@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 
 from courses.models import Course, Lesson
 # Create your models here.
@@ -56,3 +57,19 @@ class Notification(models.Model):
             return reverse('courses:course_details', args=[self.related_course.slug])
         
         return '#'
+    
+
+class UserLessonCompletion(models.Model):
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete= models.CASCADE, related_name= 'lesson_completion')
+
+    lesson = models.ForeignKey(Lesson, on_delete= models.CASCADE, related_name= 'user_completions')
+    is_completed = models.BooleanField(default= False)
+    completed_at = models.DateTimeField(auto_now_add= True)
+
+    class Meta:
+        unique_together= ('student', 'lesson')
+        ordering = ['completed_at']
+        verbose_name_plural = 'User Lesson Completions'
+
+    def __str__(self):
+        return f'{self.student.username} completed {self.lesson.title}'

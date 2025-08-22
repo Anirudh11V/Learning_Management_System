@@ -9,6 +9,7 @@
 
 <main>
     <section>
+        
         <div class="form_container">
 
             <h2>{{page_title}}</h2>
@@ -32,7 +33,11 @@
                     </div>
 
                 {% endfor %}
-                <button type="submit" class="btn-primary">{{page_title}}</button>
+
+                <button type="submit" class="btn btn-primary w-50">{{page_title}}</button>
+                <!-- <a href="{{module.course.get_absoulte_url}}" class="btn btn-secondary">
+                    &laquo; Back
+                </a> -->
             </form>
 
         </div>

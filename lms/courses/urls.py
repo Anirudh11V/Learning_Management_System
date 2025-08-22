@@ -5,6 +5,7 @@ app_name = 'courses'
 urlpatterns = [
     
     # COURSE CRUD URL.
+    path('<slug:course_slug>/manage/', views.course_manage, name= 'course_manage'),
     path('create/', views.course_create, name= 'course_create'),
     path('<slug:course_slug>/update/', views.course_update, name= 'course_update'),
     path('<slug:course_slug>/delete/', views.course_delete, name= 'course_delete'),

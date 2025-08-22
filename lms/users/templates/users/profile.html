@@ -30,14 +30,6 @@
                 </form>
             </div><hr>
 
-            <div>
-                <h3>Change Password</h3>
-                <form action="" method="post"> {% csrf_token %}
-                    {{password_form.as_p}}
-                    <button type="submit" name="change_password">Change Password</button>
-                </form>
-            </div><hr>
-
             {% if request.user.is_authenticated %}
                 <h4>My Course (as Instructor)</h4>
                 {% for course in instructor_course %}

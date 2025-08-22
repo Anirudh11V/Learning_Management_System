@@ -11,8 +11,13 @@
     <section>
         <div class="dash_container">
 
-            <h2 class="dash_title">{{page_title}}</h2>
-            <a href="{% url 'courses:course_create' %}" class="create_course">Create New Course</a>
+            <div class="card-header mb-4">
+                <h2 class="dash_title">{{page_title}}</h2>
+                <a href="{% url 'courses:course_create' %}" class="btn btn-success">
+                    Create New Course
+                </a>
+            </div>
+            
 
             {% if instructor_course %}
                 <div class="course_card_list">
@@ -28,10 +33,20 @@
                                     <span class="status_draft">Draft</span>
                                 {% endif %}
                             </p>
-                            <a href="{% url 'courses:course_details' course.slug %}" class="view_btn">View Course</a>
 
-                            <a href="{% url 'courses:course_update' course.slug %}" class="edit_btn">Edit</a>
-                            <a href="{% url 'courses:course_delete' course.slug %}" class="del_btn">Delete</a>
+                            <div class="card-footer">
+                                <span>
+                                    <a href="{{course.get_absolute_url}}" class="btn btn-info w-50 mb-2">View Course</a>
+                                    <a href="{% url 'courses:course_manage' course.slug %}" class="btn btn-secondary w-50">
+                                        Manage
+                                    </a>
+                                </span>
+                                <span>
+                                    <a href="{% url 'courses:course_update' course.slug %}" class="edit_btn">Edit</a>
+                                    <a href="{% url 'courses:course_delete' course.slug %}" class="del_btn">Delete</a>
+                                </span>
+                            </div>
+                            
                         </div>
                     {% endfor %}
 

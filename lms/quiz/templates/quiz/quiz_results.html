@@ -35,7 +35,6 @@
 
                         {% if attempt.total_marks > 0 %}
                             <p class="lead">You scored {{percentage_score|floatformat:2}}</p>
-                            <p class="text-muted">Passing Score Required :{{attempt.quiz.pass_percentage}}%</p>
                         {% else %}
                             <p class="lead">The quiz has no graded questions.</p>
                         {% endif %}
