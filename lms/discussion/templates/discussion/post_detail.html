@@ -1,0 +1,67 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+{% block content %}
+
+<main>
+    <sesction class="container mt-4">
+
+        <a href="{% url 'discussion:post_list' course.slug %}" class="btn btn-secindary mb-3">
+            &laquo; Back to All Topics
+        </a>
+
+        <div class="card mb-3">
+
+            <div class="card-header d-flex justify-content-between">
+                <strong>{{post.author.username}}</strong>
+                <small class="text-muted">{{post.created_at|timesince}} ago</small>
+            </div>
+
+            <div class="card-body">
+                <h4 class="card-title">{{post.title}}</h4>
+                <p class="card-text">{{post.content|linebreaks}}</p>
+            </div>
+
+        </div>
+        <hr>
+
+        <h4 class="mb-3">Replies ({{replies.count}}) </h4>
+
+        {% for r in replies %}
+            <div class="card mb-3">
+
+                <div class="card-header d-flex justify-content-between bg-light">
+                    <strong>{{r.author.username}}</strong>
+                    <small class="text-muted">{{r.created_at|timesince}} ago</small>
+                </div>
+
+                <div class="card-body">
+                    <p class="card-text">{{r.content|linebreaks}}</p>
+                </div>
+
+            </div>
+        {% endfor %}
+
+        <div class="card mt-4">
+
+            <div class="card-header">
+                <h5>Post a Reply</h5>
+            </div>
+
+            <div class="card-body">
+                <form action="" method="post"> {% csrf_token %}
+                    {{reply_form.as_p}}
+                    <button type="submit" class="btn btn-primary w-50">Submit Reply</button>
+                </form>
+            </div>
+
+        </div>
+
+    </sesction>
+</main>
+
+{% endblock content %}

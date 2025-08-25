@@ -74,31 +74,40 @@ class QuizAttempt(models.Model):
 
     class Meta:
         ordering = ['-started_at']
-
-    def __str__(self):
-        status = "completed" if self.is_completed else "In progress"
-        return f"{self.student.username}'s attempton {self.quiz.title} ({status})"
     
     def calculate_score(self):
         score = 0
-        self.total_marks = self.quiz.get_total_marks()
+        self.total_marks = self.quiz.get_total_marks() or 0
 
-        for user_answer in self.user_anwsers.all():
+        # Query all answers for this attempt.
+        answers = self.user_answers.all().select_related('question')
+
+        for user_answer in answers:
             if user_answer.question.question_type in ['mcq', 'true_false']:
                 if user_answer.selected_answer and user_answer.selected_answer.is_correct:
                     score += user_answer.question.marks
             elif user_answer.question.question_type == 'short_answer':
-                pass
+                if user_answer.is_correct_manual:
+                    score += user_answer.question.marks
 
         self.score= score
 
+
     def evaluate_pass_status(self):
-        if self.is_completed and self.total_marks > 0:
+        if self.total_marks > 0:
             percentage = (self.score / self.total_marks) * 100
             self.passed = percentage >= self.quiz.pass_percentage
         else:
             self.passed = False
         self.save()
+        
+
+    def recalculate_and_save(self): 
+        """Recalculate score and pass status, then saves the attempt."""
+        self.calculate_score()
+        self.evaluate_pass_status()
+        self.save()
+        
 
     def complete_attempts(self):
         self.is_completed= True
@@ -106,6 +115,10 @@ class QuizAttempt(models.Model):
         self.calculate_score()
         self.evaluate_pass_status()
         self.save()
+
+    def __str__(self):
+        status = "completed" if self.is_completed else "In progress"
+        return f"{self.student.username}'s attempt on {self.quiz.title} ({status})"
 
 
 class UserAnswer(models.Model):

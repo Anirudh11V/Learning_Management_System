@@ -37,6 +37,9 @@ urlpatterns = [
 
     # Quiz app.
     path('quiz/', include('quiz.urls')),
+    
+    # Discussion app.
+    path('discussion/', include('discussion.urls')),
 
     # Django password reset urls.
     path('accounts/password_reset/', 

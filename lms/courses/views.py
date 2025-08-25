@@ -3,7 +3,7 @@ from .models import Category, Course, Module, Lesson
 from .forms import CourseForm, ModuleForm, LessonForm, CommentForm
 from enrollment.models import Enroll
 from users.services import notify_new_lesson
-from quiz.models import QuizAttempt
+from quiz.models import QuizAttempt, Quiz
 from users.models import UserLessonCompletion
 
 from django.contrib.auth.decorators import login_required
@@ -252,8 +252,14 @@ def course_manage(request, course_slug):
         quiz__lesson__module__course= course
     ).select_related('student', 'quiz').order_by('-started_at')
 
+    # Find all quizzes in this course that contains short answer question
+    quizzes_to_grade = Quiz.objects.filter(
+        lesson__module__course= course,
+        questions__question_type= 'short_answers',
+    ).distinct()
+
     context= {'course': course, 'enrollments': enrollments, 'quiz_attempts': quiz_attempts,
-              'page_title': f"Manage: {course.title}"}
+              'quizzes_to_grade': quizzes_to_grade, 'page_title': f"Manage: {course.title}"}
 
     return render(request, 'courses/course_manage.html', context)
 

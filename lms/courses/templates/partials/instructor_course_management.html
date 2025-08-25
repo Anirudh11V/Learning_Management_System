@@ -12,6 +12,11 @@
             <a href="{% url 'courses:course_update' course.slug %}">Edit Course</a> | 
             <a href="{% url 'courses:course_delete' course.slug %}">Delete Course</a>
         </p>
+        <p>
+            <a href="{% url 'discussion:post_list' course.slug %}" class="btn btn-info">
+                Go to Course Discussion
+            </a>
+        </p>
 
         <h3>Modules & Lessons</h3>
         <p>

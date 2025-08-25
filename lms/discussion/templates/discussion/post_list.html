@@ -1,0 +1,62 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+{% block content %}
+
+<main>
+    <section class="container mt-4">
+
+        <h2 class="mb-4">Discussion for: 
+            <span class="text-primary"> {{course.title}}</span>
+        </h2>
+
+        <div class="card mb-4">
+
+            <div class="card-header">
+                <h5>Start a New Discussion Topic</h5>
+            </div>
+
+            <div class="card-body">
+                <form action="" method="post"> {% csrf_token %}
+                    {{form.as_p}}
+                    <button type="submit" class="btn btn-primary w-50">Post New Topic</button>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-header">
+                <h5>Existing Topics</h5>
+            </div>
+
+            <div class="list-group list-group-flush">
+                {% for post in posts %}
+                    <a href="{% url 'discussion:post_detail' post.id %}" class="list-group-item list-group-item-action">
+
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{post.title}}</h5>
+                            <small> {{post.created_at|timesince}} ago </small>
+                        </div>
+                        <p class="mb-1">Started by: {{post.author.username}}</p>
+                        <small>{{post.replies.count}}</small>
+
+                    </a>
+                {% empty %}
+                    <div class="list-group-item">
+                        <p class="text-muted">No discussion topics yet. Be the first to start one.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </section>
+</main>
+
+{% endblock content %}

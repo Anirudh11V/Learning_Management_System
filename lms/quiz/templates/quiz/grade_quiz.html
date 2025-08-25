@@ -1,0 +1,69 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}
+    {{page_title}}
+{% endblock title %}
+
+{% block content %}
+
+<main>
+    <section class="container mt-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>Grade Short Answers: 
+                <span class="text-muted"> {{quiz.title}} </span>
+            </h3>
+            <a href="{% url 'courses:course_manage' quiz.lesson.module.course.slug %}" class="btn btn-secondary">
+                &laquo; Back to Course Management
+            </a>
+        </div>
+
+        <div class="card">
+
+            <div class="card-header">
+                <h4>Ungraded Submission</h4>
+            </div>
+
+            <div class="card-body">
+                {% if ungraded_answers %}
+                <table class="table table-striped"> 
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Question</th>
+                            <th>Submitted Answer</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for answer in ungraded_answers %}
+                        <tr>
+                            <td> {{answer.attempt.student.username}} </td>
+                            <td><em> {{answer.question.text}} </em></td>
+                            <td class="w-50"> {{answer.short_answer_text}} </td>
+                            <td>
+                                <form action="{% url 'quiz:mark_answer_correct' answer.id %}" method="post"> 
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        Mark as Correct
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <p class="text-muted">
+                        There are no ungraded short answers for this quiz.
+                    </p>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </section>
+</main>
+
+{% endblock content %}

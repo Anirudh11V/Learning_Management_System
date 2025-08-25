@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Max
 from django.core.exceptions import PermissionDenied
+from django.utils import timezone
 
 from .models import Quiz, Question, Answer, QuizAttempt, UserAnswer
 from .forms import QuizForm, QuestionForm, AnswerForm, UserAnswerForm
@@ -163,3 +164,46 @@ def quiz_results(request, attempt_id):
     
     context= {'attempt': attempt, 'percentage_score':percentage_score, 'page_title': f"Result for {attempt.quiz.title}"}
     return render(request, 'quiz/quiz_results.html', context)
+
+
+@login_required
+def grade_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id= quiz_id)
+    course = quiz.lesson.module.course
+
+    if request.user != course.instructor:
+        messages.error(request, "You are not authorized to grade this quiz.")
+        return redirect('users:instructor_dashboard')
+    
+    # Find all ungraded short answers.
+    ungraded_answers = UserAnswer.objects.filter(
+        attempt__quiz= quiz,
+        question__question_type= 'short_answers',
+        graded_at__isnull= True,
+    ).select_related('question', 'attempt__student')
+
+    context= {'quiz': quiz, 'ungraded_answers': ungraded_answers, 'page_title': f"Grade Short Answer for {quiz.title}"}
+    return render(request, "quiz/grade_quiz.html", context)
+
+
+@login_required
+def mark_answer_correct(request, user_answer_id):
+    if request.user == 'POST':
+        user_answer = get_object_or_404(UserAnswer, id= user_answer_id)
+        quiz = user_answer.attempt.quiz
+        course = quiz.lesson.module.course
+
+        if request.user != course.instructor:
+            messages.error(request, "You are not authorized to perform this action.")
+            return redirect('users:instructor_dashboard')
+        
+        user_answer.is_correct_manual = True
+        user_answer.graded_at = timezone.now()
+        user_answer.save()
+
+        user_answer.attempt.recalculate_and_save()
+        messages.success(request, "Amswer marked as correct and score updated.")
+        return redirect("quiz:grade_quiz", quiz_id= quiz.id)
+    
+    return redirect('users:instructor_dashboard')
+
