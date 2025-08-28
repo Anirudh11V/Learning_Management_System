@@ -23,7 +23,7 @@ class Category(models.Model):
         return self.Name
     
     def get_absolute_url(self):
-        return reverse('course_list_by_category', args=[self.slug])
+        return reverse('courses:course_list', args=[self.slug])
     
 
 class Course(models.Model):

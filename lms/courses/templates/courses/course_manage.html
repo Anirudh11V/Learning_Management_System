@@ -48,7 +48,8 @@
                                         aria-valuenow="{{ e.get_progress_percentage|floatformat:0 }}" 
                                         aria-valuemin="0"
                                         aria-valuemax="100"
-                                        style= "width: '{{ e.get_progress_percentage|floatformat:0 }}%';">
+                                        style="width: {{e.get_progress_percentage|floatformat:0}}%;"
+                                        >
 
                                         {{e.get_progress_percentage|floatformat:0}}
 

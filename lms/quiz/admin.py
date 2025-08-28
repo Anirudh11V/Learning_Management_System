@@ -45,6 +45,12 @@ class AnswerAdmin(admin.ModelAdmin):
     raw_id_fields = ['question']
 
 
+@admin.action(description= "Regrade selected attempts")
+def regrade_selected_attempts(modeladmin, request, queryset):
+    for attempt in queryset:
+        attempt.recalculate_and_save()
+    modeladmin.message_user(request, f"{queryset.count()} attempts have been successfully regraded.")
+
 @admin.register(QuizAttempt)
 class QuizAttemptAdmin(admin.ModelAdmin):
     list_display = ['student', 'quiz', 'score', 'total_marks', 'is_completed', 'passed', 'started_at', 'completed_at']
@@ -52,6 +58,7 @@ class QuizAttemptAdmin(admin.ModelAdmin):
     search_fields = ['student__username', 'quiz__title']
     readonly_fields = ['score', 'total_marks', 'started_at', 'completed_at', 'passed']
     inlines = [UserAnswerInline]
+    actions = [regrade_selected_attempts]
 
 
 @admin.register(UserAnswer)

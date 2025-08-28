@@ -19,7 +19,7 @@ class Enroll(models.Model):
         unique_together= ('student', 'course')
         ordering = ['-enrolled_at']
 
-    def __str_(self):
+    def __str__(self):
         return f'{self.student.username} enrolled in {self.course.title}'
     
     def get_progress_percentage(self):
@@ -34,4 +34,25 @@ class Enroll(models.Model):
             ).count()
         return (completed_lessons_count / total_lessons) * 100 
     
+    @property
+    def progress_percentage(self):
+        """Calculates the progress percentage. Relies on the view annotating the instance with
+            total_lessons and completed_lessons."""  
+        if hasattr(self, 'total_lessons') and self.total_lessons > 0:
+            return (self.completed_lessons / self.total_lessons) * 100
+        return 0
+    
+    def get_next_lesson(self):
+        """Finds the 1st uncompleted lesson in the course for the student using a more efficient query."""
+        completed_lessons_ids = UserLessonCompletion.objects.filter(
+            student = self.student,
+            is_completed = True,
+        ).values_list('lesson_id', flat= True)
 
+        next_lesson = Lesson.objects.filter(
+            module__course= self.course
+        ).exclude(
+            id__in= completed_lessons_ids
+        ).order_by('module__order', 'order').first()
+
+        return next_lesson

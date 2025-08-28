@@ -1,13 +1,27 @@
 from django import forms
-from . models import Course, Module, Lesson, Comment
+from . models import Course, Module, Lesson, Comment, Category
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['Name', 'description']
+        labels = {
+            'Name': 'Category Title',
+            'description': 'Category Description',
+        }
+        widgets = {
+            'description': forms.Textarea(attrs= {'rows': 3}),
+        }
 
 
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['thumbnail', 'title', 'description', 'price', 'is_published']
+        fields = ['thumbnail', 'category', 'title', 'description', 'price', 'is_published']
         labels = {
             'thumbnail': 'Course Thumbnail',
+            'category': 'course_category',
             'title': 'Course title',
             'description': 'Course Description',
             'price': 'Price(Rs)',

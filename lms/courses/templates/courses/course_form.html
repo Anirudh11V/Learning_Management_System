@@ -8,14 +8,47 @@
 {% block content %}
 
 <main>
+    
     <section>
         <div class="form_container">
+            
+            {% if page_title == 'Create New Course' %}
+                <h2>Category Creation</h2>
+            
+                <form action="" method="post"> {% csrf_token %}
+                    <p class="text-muted">
+                        *Only if you want new category, below in course creation there is list of categories check it.
+                    </p>
+                    {% for j in c_form %}
+                        <div class="form_group">
+                            <label for="{{j.id_for_label}}">{{j.label}} : </label>
+                            {{j}}
+    
+                            {% if j.errors %}
+                                <ul class="errorlist">
+                                    {% for error in j.errors %}
+                                        <li>{{error}}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                            
+                        </div>
+                    {% endfor %}
+                        <button type="submit" class="btn btn-primary" name="course_category">
+                            course_category
+                        </button>
+                </form>
+            {% endif %}
 
-            <h2>{{page_title}}</h2>
+        </div>
+    </section>
+
+    <section>
+        <div class="form_container">
+            <h2 class="mt-4">{{page_title}}</h2>
 
             <form action="" method="post" enctype="multipart/form-data"> {% csrf_token %}
                 {% for i in form %}
-
                     <div class="form_group">
                         <label for="{{i.id_for_label}}">{{i.label}} : </label>
                         {{i}}
@@ -31,11 +64,21 @@
                     </div>
 
                 {% endfor %}
-                <button type="submit" class="btn-primary">{{page_title}}</button>
+                <button type="submit" class="btn btn-primary w-75" name="create_course">{{page_title}}</button>
+                {% if page_title == 'Create New Course' %}
+                    <a href="{% url 'users:instructor_dashboard' %}" class="btn btn-secondary">
+                        &laquo; Back
+                    </a>
+                {% else %}
+                    <a href="{{course.get_absolute_url}}" class="btn btn-secondary">
+                        &laquo; Back
+                    </a>
+                {% endif %}
             </form>
 
         </div>
     </section>
+
 </main>
 
 {% endblock content %}

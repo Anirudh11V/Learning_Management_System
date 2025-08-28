@@ -26,7 +26,11 @@
 
                         <form action="" method="post"> {% csrf_token %}
                             <div class="form-group">
-                                {{form.answer}}
+                                {% if form.answer %}
+                                    {{form.answer}}
+                                {% elif form.answer_text %}
+                                    {{form.answer_text}}
+                                {% endif %}
                             </div>
                             <hr>
                             <button type="submit" class="btn btn-primary w-50">Submit Answer</button>

@@ -3,65 +3,83 @@
 
 {% block content %}
 
-<main>
-    <section>
-        <div class="dash_container">
-            <h1 class="dash_title">{{page_title}}</h1>
+<section class="container mt-4">
+    <h2 class="mb-2">{{page_title}}</h2>
+    {% if enrolled_courses %}
+        <div class="row">
 
-            {% if request.user.is_authenticated %}
-                {% if request.user.is_student %}
-                    {% if enrolled_course %}
-                        <div class="course_card_list">
-                            {% for enroll in enrolled_course %}
+            {% for enroll in enrolled_courses %}
+                <div class="col-md-6 col-lg-4 mb-4">
 
-                            <div class="course_card">
+                    <div class="card ">
+                        {% if enroll.course.thumbnail %}
+                        <img src="{{enroll.course.thumbnail.url}}" class="card-img-top" 
+                        alt="{{enroll.course.title}} thumbnail">
+                        {% endif %}
+                    </div>
 
-                                <h3>{{enroll.course.title}}</h3>
-                                <p class="instructor">Instructor : {{enroll.course.instructor.username}}</p>
-                                <p>{{enroll.course.description|truncatechars:100}}</p>
-                                <a href="{% url 'courses:course_details' enroll.course.slug %}" class="view_btn">
-                                    view course
-                                </a>
-                                
-                                {% if enroll.course.module.first.lesson.first %}
-                                    <a href="{% url 'courses:lesson_details' enroll.course.slug 
-                                    enroll.course.module.first.slug
-                                    enroll.course.module.first.lesson.first.slug %}" class="view_btn">
-                                    start/continue_learning
-                                    </a>
-                                {% endif %}
-                            </div>
-
-                            {% endfor %}
-                        </div>
-                    {% else %}
-
-                        <p class="no_course_msg">
-                            You haven't enrolled in any course yet. Explore our <a href="{% url 'courses:course_list' %}">
-                                available course.
-                            </a>
+                    <div class="card-body d-flex flex-column ">
+                        <h5 class="card-title"> {{enroll.course.title}} </h5>
+                        <p class="card-text text-muted">
+                            by {{enroll.course.instructor.username}}
                         </p>
 
-                    {% endif %}
+                        {% if enroll.total_lessons >= 0 %}
+                            
+                            <div class="progress mb-2" style="height: 20px;">
 
-                {% else %}
+                                <div class="progress-bar" role="progressbar"
+                                aria-valuenow="{{enroll.progress_percentage|floatformat:0}}"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                style="width: {{enroll.progress_percentage|floatformat:0}}%;">
 
-                    <p class="no_course_msg">Access Denied : This dashboard is only for students only.</p>
-                    <p class="no_course_msg"> If you are an instructor, please proceed to your
-                        <a href="{% url 'users:profile' %}">pofile page</a>
-                    </p>
+                                {{enroll.progress_percentage|floatformat:0}}
 
-                {% endif %}
-            
-            {% else %}
+                                </div>
 
-                <p class="login_prompt">please 
-                    <a href="{% url 'users:login' %}">log in</a> to view your learning dashboard.
-                </p>
-            
-            {% endif %}
+                            </div>
+                            <p class="card-text">
+                                <small> 
+                                    {{enroll.completed_lessons}} of {{enroll.total_lessons}} lessons completed.
+                                </small>
+                            </p>
+                        
+                        {% else %}
+                            <p class="card-text">
+                                <small>This course has no lessons yet.</small>
+                            </p>
+                        {% endif %}
+
+                        <div class="mt-6">
+                            {% with next_lesson=enroll.get_next_lesson %}
+                                {% if next_lesson %}
+                                    <a href="{{next_lesson.get_absolute_url}}" class="btn btn-primary">
+                                        Continue Learning
+                                    </a>
+                                {% else %}
+                                    <a href="{{enroll.course.get_absolute_url}}" class="btn btn-success">
+                                        Course Completed! Review
+                                    </a>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+
+                    </div>
+
+                </div>
+            {% endfor %}
+
         </div>
-    </section>
-</main>
+    {% else %}
+
+        <div class="alert alert-info">
+            You are not currently enrolled in any courses. <a href="{% url 'courses:course_list' %}"
+            class="alert-link"> Browse course
+            </a> to get started.
+        </div>
+
+    {% endif %}
+</section>
 
 {% endblock content %}

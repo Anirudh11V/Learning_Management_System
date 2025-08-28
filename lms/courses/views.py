@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, Course, Module, Lesson
-from .forms import CourseForm, ModuleForm, LessonForm, CommentForm
+from .forms import CourseForm, ModuleForm, LessonForm, CommentForm, CategoryForm
 from enrollment.models import Enroll
 from users.services import notify_new_lesson
 from quiz.models import QuizAttempt, Quiz
@@ -180,8 +180,10 @@ def course_create(request):                 # Course creation.
         return redirect('users:instructor_dashboard')
     
     if request.method == 'POST':
+        c_form = CategoryForm(request.POST)
         form = CourseForm(request.POST, request.FILES)
-        if form.is_valid():
+
+        if 'create_course' in request.POST and form.is_valid():
             new_course = form.save(commit= False)
             new_course.instructor = request.user
             new_course.slug = slugify(new_course.title)
@@ -189,13 +191,20 @@ def course_create(request):                 # Course creation.
             messages.success(request, f"Course '{new_course.title}' created successfully.")
             return redirect('users:instructor_dashboard')
         
+        elif 'course_category' in request.POST and c_form.is_valid():
+            new_category = c_form.save(commit= False)
+            new_category.instructor = request.user
+            new_category.slug = slugify(new_category.Name)
+            new_category.save()
+        
         else:
             messages.error(request, 'Please correct the errors.')
 
     else:
+        c_form = CategoryForm()
         form = CourseForm()
 
-    context = {'form': form, 'page_title': 'Create New Course'}
+    context = {'form': form, 'c_form': c_form, 'page_title': 'Create New Course'}
     return render(request, 'courses/course_form.html', context)
 
 @login_required(login_url= 'users:login')
@@ -207,7 +216,7 @@ def course_update(request, course_slug):    # Course edit/updating.
     
     if request.method == 'POST':
         form = CourseForm(request.POST, instance= course)
-        if form.is_valid():
+        if 'create_course' in request.POST and form.is_valid():
             form.save()
             messages.success(request, f"Course '{course.title}' updated successfully.")
             return redirect('courses:course_details', course_slug= course.slug)

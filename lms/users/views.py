@@ -4,13 +4,14 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.db.models import F
+from django.db.models import F, Count, OuterRef, Subquery
+from django.db.models.functions import Coalesce
 from django.contrib.auth import get_user_model, update_session_auth_hash
 
 from .forms import MemberUserChangeForm, MemberUserCreation, UserUpdateForm, ProfileUpdateForm
-from .models import Profile, Notification
+from .models import Profile, Notification, UserLessonCompletion
 from enrollment.models import Enroll
-from courses.models import Course
+from courses.models import Course, Lesson
 # Create your views here.
 
 
@@ -118,20 +119,51 @@ def profile(request):
     return render(request, template_name, context)
 
 
-@login_required(login_url= 'users:login')
+# @login_required(login_url= 'users:login')
+# def student_dashboard(request):
+#     if not request.user.is_student:
+#         messages.warning(request, "This page is only for student.")
+
+#         if request.user.is_instructor:
+#             return redirect('users:profile')
+#         else:
+#             return redirect('courses:course_list')
+        
+#     enrolled_course = Enroll.objects.filter(student= request.user).select_related('course')
+
+#     context= {'enrolled_course': enrolled_course, 'page_title': 'My Learning Dashboard'}
+#     return render(request, 'users/stu_dashboard.html', context)
+
+@login_required
 def student_dashboard(request):
     if not request.user.is_student:
-        messages.warning(request, "This page is only for student.")
+        messages.warning(request, "This page is only for students.")
+        return redirect('users:profile')
+    
+    # Base queryset for all of the users enrollments.
+    enrollments = Enroll.objects.filter(student= request.user)
 
-        if request.user.is_instructor:
-            return redirect('users:profile')
-        else:
-            return redirect('courses:course_list')
-        
-    enrolled_course = Enroll.objects.filter(student= request.user).select_related('course')
+    # Subquery to count total lessons foe each course.
+    total_lessons_sq = Lesson.objects.filter(
+        module__course= OuterRef('course')
+    ).values('module__course').annotate(count= Count('id')).values('count')
 
-    context= {'enrolled_course': enrolled_course, 'page_title': 'My Learning Dashboard'}
-    return render(request, 'users/stu_dashboard.html', context)
+    # Subquery to count completed lessons for user in each course.
+    completed_lesson_sq = UserLessonCompletion.objects.filter(
+        student= request.user,
+        lesson__module__course= OuterRef('course'),
+        is_completed= True,
+    ).values('lesson__module__course').annotate(count= Count('id')).values('count')
+
+    # Annotate the main queryset with the count from out aubqueries.
+    enrollments = enrollments.annotate(
+        total_lessons = Coalesce(Subquery(total_lessons_sq), 0),
+        completed_lessons = Coalesce(Subquery(completed_lesson_sq), 0),
+    ).select_related('course')
+
+    context= {'enrolled_courses': enrollments, 
+              'page_title': 'My Learning Dashboard'}
+    return render(request, "users/stu_dashboard.html", context)
 
 
 @login_required(login_url= 'users:login')

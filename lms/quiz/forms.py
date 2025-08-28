@@ -73,3 +73,10 @@ class UserAnswerForm(forms.Form):
         super().__init__(*args, **kwargs)
         if question:
             self.fields['answer'].queryset = question.answers.all()
+
+
+class ShortAnswerForm(forms.Form):
+    answer_text = forms.CharField(
+        widget= forms.Textarea(attrs= {'rows': 4}),
+        label= "Your Answer"
+    )

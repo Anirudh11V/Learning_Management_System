@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 
 from .models import Quiz, Question, Answer, QuizAttempt, UserAnswer
-from .forms import QuizForm, QuestionForm, AnswerForm, UserAnswerForm
+from .forms import QuizForm, QuestionForm, AnswerForm, UserAnswerForm, ShortAnswerForm
 from courses.models import Lesson
 from enrollment.models import Enroll
 
@@ -127,25 +127,43 @@ def quiz_take(request, attempt_id, question_order):
     
     question = get_object_or_404(Question, quiz= attempt.quiz, order= question_order)
 
+    form = None
     if request.method == 'POST':
-        form =  UserAnswerForm(request.POST, question= question)
-        if form.is_valid():
-            selected_answer = form.cleaned_data['answer']
-            UserAnswer.objects.update_or_create(
-                attempt= attempt,
-                question= question,
-                defaults= {'selected_answer': selected_answer},
-            )
+        if question.question_type in ['mcq', 'true_false']:
+            form =  UserAnswerForm(request.POST, question= question)
+            if form.is_valid():
+                selected_answer = form.cleaned_data['answer']
+                UserAnswer.objects.update_or_create(
+                    attempt= attempt,
+                    question= question,
+                    defaults= {'selected_answer': selected_answer},
+                )
 
-        next_question = Question.objects.filter(quiz= attempt.quiz, order__gt= question_order).order_by('order').first()
+        elif question.question_type == 'short_answers':
+            form = ShortAnswerForm(request.POST)
+            if form.is_valid():
+                answer_text = form.cleaned_data['answer_text']
+                UserAnswer.objects.update_or_create(
+                    attempt= attempt,
+                    question= question,
+                    defaults= {'short_answer_text': answer_text}
+                )
+
+        if form and form.is_valid():
+            next_question = Question.objects.filter(quiz= attempt.quiz, 
+                                                    order__gt= question_order).order_by('order').first()
 
         if next_question:
             return redirect('quiz:quiz_take', attempt_id= attempt.id, question_order= next_question.order)
         else:
+            attempt.complete_attempts()
             return redirect('quiz:quiz_results', attempt_id= attempt.id)
         
     else:
-        form = UserAnswerForm(question= question)
+        if question.question_type in ['mcq', 'true_false']:
+            form = UserAnswerForm(question= question)
+        elif question.question_type == 'short_answers':
+            form = ShortAnswerForm()
 
     context= {'attempt': attempt, 'question': question, 'form': form, 'page_title': f"Question {question.order}"}
     return render(request, 'quiz/quiz_take.html', context)
@@ -206,4 +224,3 @@ def mark_answer_correct(request, user_answer_id):
         return redirect("quiz:grade_quiz", quiz_id= quiz.id)
     
     return redirect('users:instructor_dashboard')
-
