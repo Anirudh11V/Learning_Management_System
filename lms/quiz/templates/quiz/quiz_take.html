@@ -29,7 +29,7 @@
                                 {% if form.answer %}
                                     {{form.answer}}
                                 {% elif form.answer_text %}
-                                    {{form.answer_text}}
+                                    {{form.answer_text|safe}}
                                 {% endif %}
                             </div>
                             <hr>

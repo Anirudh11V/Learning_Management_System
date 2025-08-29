@@ -41,6 +41,9 @@ urlpatterns = [
     # Discussion app.
     path('discussion/', include('discussion.urls')),
 
+    # tinymce
+    path('tinymce/', include('tinymce.urls')),
+
     # Django password reset urls.
     path('accounts/password_reset/', 
          auth_view.PasswordResetView.as_view(template_name= 'users/password_reset_form.html'),

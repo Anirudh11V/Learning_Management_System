@@ -1,6 +1,7 @@
 from django import forms
 from . models import Course, Module, Lesson, Comment, Category
 
+from tinymce.widgets import TinyMCE
 
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -11,7 +12,7 @@ class CategoryForm(forms.ModelForm):
             'description': 'Category Description',
         }
         widgets = {
-            'description': forms.Textarea(attrs= {'rows': 3}),
+            'description': TinyMCE(),
         }
 
 
@@ -29,7 +30,7 @@ class CourseForm(forms.ModelForm):
         }
 
         widgets = {
-            'description': forms.Textarea(attrs= {'rows': 4}),
+            'description': TinyMCE(),
             'price': forms.NumberInput(attrs= {'step': '0.01'}),
         }
 
@@ -45,7 +46,7 @@ class ModuleForm(forms.ModelForm):
         }
 
         widgets = {
-            'description': forms.Textarea(attrs= {'rows':4}),
+            'description': TinyMCE(),
             'order': forms.NumberInput(attrs= {'placeholder': 'Enter a number'}),
         }
 
@@ -64,7 +65,7 @@ class LessonForm(forms.ModelForm):
         }
 
         widgets = {
-            'text_content': forms.Textarea(attrs= {'rows': 8}),
+            'text_content': TinyMCE(),
             'order': forms.NumberInput(attrs= {'placeholder': 'Enter a number'}),
         }
 

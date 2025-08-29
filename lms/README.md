@@ -1,9 +1,9 @@
-lms - A simple Learning Management System.
+EduNova - A simple Learning Management System.
 
 
 About the Project.
 
-	lms is a minimalist Learning Management System (LMS) built with Django, designed to provide a foundational platform 
+	EduNova is a minimalist Learning Management System built with Django, designed to provide a foundational platform 
 for managing online course, modules, lessons. It supports distinct user roles (students, instructor), course enrollment
 and basic lesson content delivery and tracking.
 
@@ -14,14 +14,16 @@ and basic lesson content delivery and tracking.
 	-URL routing and namespacing,
 	-Django forms and Form validations,
 	-Database management,
-	-Basic templates and user interface.
+	-Basic templates and user interface,
+	-Rich text editor.
 
 Project Status:
 	This project is in active development. The core functionality is in place, allowing instructor to create courses and students to enroll and complete lessons.
 
-	Core LMS Feature : Fully functional.
-	Quiz System : Backend models are complete; frontend view and quiz taking logics are future enhancements.
-	Discussion & Core apps : Scaffolding exixts, but these apps are planned for future implementations.
+	Core Feature : Fully functional.
+	Quiz System : Fully functional.
+	Discussion : Fully functional.
+	Core apps : Scaffolding exists, but these app are planned for future implementations.
 
 
 Features.
@@ -32,7 +34,7 @@ Features.
 		-Instructor Request Workflow: 
 			Users can request to became an instructor during registration. An admin must approve the request before instructor privileges are granted.
 		
-	-Course & COntent management-
+	-Course & Content management-
 		-Instructor can create, update and delete their course through a dedicated dashboard.
 		-Courses are organized into modules, which in turn contain individual lessons.
 		-Support for multiple lesson content type, including text, video urls, files.
@@ -53,6 +55,9 @@ Features.
 	-Django admin integrations-
 		-Full adminstration interface for managing users, courses, modules, lessons and enrollment.
 
+	-Discussion-
+		-Instructor and Student can build conversation in their course.
+
 
 Technologies Used.
 
@@ -70,6 +75,7 @@ Technologies Used.
 	
 	-Tool
 		-Docker
+		-TinyMCE
 
 
 Getting Started.
@@ -158,7 +164,7 @@ Usage.
 	-Instructor user flow.
 		1.Login: login with an instructor account at http://127.0.0.1:8000/.
 		2.Browse course: instructor can view course details, but they cannot enroll in course.
-		3.My Dashboard: Dedicated instructor dashboard for managing their own courses.
+		3.My Dashboard: Dedicated instructor dashboard for managing their own courses and seperate interface for instructors to view student progress.
 		4.Course create: click on Add new course in instructor dashboard and fill up details, set is_published= True.
 		5.Module create: After creation of course now in course user can see a button to Add new module.
 			After module created instructor have access to Edit/Delete/Add new lesson for every module.
@@ -175,21 +181,18 @@ Project Structure.
 	users: Handles the custom user model and authentication and profile.
 	enrollment: Manage course enrollment and tracks lesson completion.
 	quiz: Contains models of quizzes, questions and answers.
-	core & discussion: placeholder app for future development.
+	discussion: In course, handles conversation of both instructor and student.
+	core: placeholder app for future development.
 
 Future Enhancements.
-		
-	-In instructor dashboard: A seperate interface for instructors to view student progress, and interact with students.
 	
 	-Payment gateway integrations: Implement a real payment gateway for paid course.
 	
-	-Quizzes & Assignments: Add functionality for quizzes, assignments, and grading.
+	-Assignments: Add functionality for assignments, and grading.
+
+	-Certificate: Add functionality for certification after successfully completion of course.
 	
-	-Notifications: Email notification for enrollment, new lessons etc.
-	
-	-Search & filtering: Enhanced course action search and filtering options.
-	
-	-Rich text editor: For course/lesson descriptions.
+	-Notifications: Advanced, email notification for enrollment, new lessons etc.
 	
 	-Improved UI\UX: A more polished and responsive frontend design using Css framework.
 	

@@ -3,6 +3,7 @@ from django.db.models.base import Model
 from .models import  Quiz, Question, Answer
 
 from django.core.exceptions import ValidationError
+from tinymce.widgets import TinyMCE
 
 class QuizForm(forms.ModelForm):
     class Meta:
@@ -14,6 +15,9 @@ class QuizForm(forms.ModelForm):
             'duration_minutes': 'Time Limit (in minutes)',
             'pass_percentage': 'Passing Score (%)',
             'is_piblished': 'Make the quiz available to students',
+        }
+        widgets= {
+        'description': TinyMCE(),
         }
 
         help_texts = {
@@ -31,6 +35,9 @@ class QuestionForm(forms.ModelForm):
             'question_type': 'Type of question',
             'marks': 'Points for correct answer',
         }
+        widgets= {
+            'text': forms.Textarea(attrs= {'rows': 4}),
+        }
 
 
 class AnswerForm(forms.ModelForm):
@@ -40,6 +47,9 @@ class AnswerForm(forms.ModelForm):
         labels = {
             'text': 'Answer Text',
             'is_correct': 'Is this the correct answer?',
+        }
+        widgets={
+            'text': forms.Textarea(attrs= {'rows': 4}),
         }
     
     def __init__(self, *args, question= None, **kwargs):
@@ -77,6 +87,6 @@ class UserAnswerForm(forms.Form):
 
 class ShortAnswerForm(forms.Form):
     answer_text = forms.CharField(
-        widget= forms.Textarea(attrs= {'rows': 4}),
+        widget= TinyMCE(),
         label= "Your Answer"
     )

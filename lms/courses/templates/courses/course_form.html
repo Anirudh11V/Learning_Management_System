@@ -10,7 +10,7 @@
 <main>
     
     <section>
-        <div class="form_container">
+        <div class="container mt-2">
             
             {% if page_title == 'Create New Course' %}
                 <h2>Category Creation</h2>
@@ -20,7 +20,7 @@
                         *Only if you want new category, below in course creation there is list of categories check it.
                     </p>
                     {% for j in c_form %}
-                        <div class="form_group">
+                        <div class="list-group list-group-item list-group-item-action">
                             <label for="{{j.id_for_label}}">{{j.label}} : </label>
                             {{j}}
     
@@ -43,13 +43,13 @@
         </div>
     </section>
 
-    <section>
-        <div class="form_container">
-            <h2 class="mt-4">{{page_title}}</h2>
+    <section class="mt-2">
+        <div class="container">
+            <h2 class="mt-2">{{page_title}}</h2>
 
             <form action="" method="post" enctype="multipart/form-data"> {% csrf_token %}
                 {% for i in form %}
-                    <div class="form_group">
+                    <div class="list-group list-group-item list-group-item-action">
                         <label for="{{i.id_for_label}}">{{i.label}} : </label>
                         {{i}}
 

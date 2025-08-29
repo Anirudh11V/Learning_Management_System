@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'enrollment',
     'quiz',
     'users',
+
+    'tinymce',
 ]
 
 AUTH_USER_MODEL = 'users.MemberUser'
@@ -147,3 +149,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # This settings will print emails to the console instead of sending them.
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+# Tinymce
+TINYMCE_DEFAULT_CONFIG = {
+    'height': '320px',
+    'width': 'auto',
+    'menubar': 'file edit view insert format tools table help',
+
+    'plugins': 'advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code'
+                'fullscreen insertdatetime media table paste code help wordcount spellchecker',
+
+    'toolbar': 'undo redo | bold italic underline strikethrough | fontselect fontsieselect formatselect | alignleft'
+                'aligncenter alignright alignjustify | outdent indent | numlist bullist checklist | forecolor'
+                'backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | '
+                'fullscreen preview save print | insertfile image media pageembed template link anchor codesample | '
+                'a11ycheck ltr rtl | showcomments addcomments code',
+            
+    'custom_undo_redo_levels': 10,
+}

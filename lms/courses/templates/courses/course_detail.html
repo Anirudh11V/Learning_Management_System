@@ -21,7 +21,7 @@
                 {% endif %}
 
                 <div class="course_info_text">
-                    <p>{{course.description}}</p>
+                    <p>{{course.description|safe}}</p>
                     <div class="course_meta">
                         <span>Category: {{course.category.Name|default:"N/A"}}</span>
                         <span>Instructor: {{course.instructor.get_fullname|default:course.instructor.username}}</span>
@@ -66,7 +66,7 @@
                 {% for module in modules %}
                     <h3>Module {{module.order}}: {{module.title}}</h3>
                         
-                    <p>{{module.description}}</p>
+                    <p>{{module.description|safe}}</p>
 
                     {% if module.lesson.all %}
                         <h4>Lessons: </h4>

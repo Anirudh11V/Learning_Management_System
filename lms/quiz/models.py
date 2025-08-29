@@ -31,7 +31,7 @@ class Quiz(models.Model):
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete= models.CASCADE, related_name= 'questions')
 
-    text = models.TextField()
+    text = models.TextField(blank=False, null= False)
     marks = models.PositiveIntegerField(default= 1)
     question_type = models.CharField(max_length= 30, choices= [
         ('mcq', 'Multiple Choice Question'),
@@ -51,7 +51,7 @@ class Question(models.Model):
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete= models.CASCADE, related_name= 'answers')
 
-    text = models.CharField(max_length= 200)
+    text = models.TextField(blank=False, null= False)
     is_correct = models.BooleanField(default= False)
 
     class Meta:

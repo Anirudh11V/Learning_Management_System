@@ -9,7 +9,7 @@
 
 <main>
     <section>
-        <div class="form_container">
+        <div class="container p-auto">
 
             <h2>{{page_title}}</h2>
             <p>For Course : {{course.title}} > Module : {{module.title}}</p>
@@ -17,7 +17,7 @@
             <form action="" method="post" enctype="multipart/form-data"> {% csrf_token %}
                 {% for i in form %}
 
-                    <div class="form_group">
+                    <div class="list-group list-group-item list-group-item-action">
                         <label for="{{i.id_for_label}}">{{i.label}} : </label>
                         {{i}}
 
@@ -32,8 +32,8 @@
                     </div>
 
                 {% endfor %}
-                <button type="submit" class="btn btn-primary w-50">{{page_title}}</button>
-                <a href="{{course.get_absolute_url}}" class="btn btn-secondary">
+                <button type="submit" class="btn btn-primary w-50 mt-3">{{page_title}}</button>
+                <a href="{{course.get_absolute_url}}" class="btn btn-secondary mt-3">
                     &laquo; Back
                 </a>
             </form>

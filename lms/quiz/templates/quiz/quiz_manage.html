@@ -14,7 +14,7 @@
             <div class="p-4 mb-4 bg-light rounded-3">
                 <div class="container-fluid py-3">
                     <h1 class="display-5 fw-bold">{{quiz.title}}</h1>
-                    <p class="col-md-8 fs-5">{{quiz.description}}</p>
+                    <p class="col-md-8 fs-5">{{quiz.description|safe}}</p>
                     <p class="text-muted">For Lesson : {{quiz.lesson.title}}</p>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                             {% for q in questions %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
-                                        <strong>Q{{q.order}}: </strong>{{q.text|truncatechars:60}}<br>
+                                        <strong>Q{{q.order}}: </strong>{{q.text|truncatechars:60|safe}}<br>
                                         <small class="text-muted">{{q.get_question_type_display}} |
                                             {{q.marks}} mark
                                         </small>

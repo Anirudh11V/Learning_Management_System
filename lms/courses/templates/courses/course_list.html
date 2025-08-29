@@ -34,7 +34,7 @@
 
                 <div class="course-card-content">
                     <h3><a href="{% url 'courses:course_details' course.slug %}">{{course.title}}</a></h3>
-                    <p>{{course.description|truncatechars:150}}</p>
+                    <p>{{course.description|truncatechars:150|safe}}</p>
                     <p>Instructor : {{course.instructor.get_full_name|default:course.instructor.username}}</p>
                     <p>Price : {% if course.price > 0 %} RS-{{course.price}}{% else %}Free{% endif %}</p>
                 </div>

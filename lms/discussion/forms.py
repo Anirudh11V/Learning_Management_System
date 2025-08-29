@@ -1,6 +1,7 @@
 from django import forms
 from .models import Post
 
+from tinymce.widgets import TinyMCE
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -21,5 +22,5 @@ class ReplyForm(forms.ModelForm):
         }
 
         widgets = {
-            'content': forms.Textarea(attrs= {'row':4, 'placeholder': 'Write your reply...'}),
+            'content': TinyMCE(),
         }

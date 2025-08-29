@@ -17,7 +17,7 @@
                     <div class="card-body">
                         <p class="fs-5 mb-0">
                             <strong>Question : </strong>
-                            {{question.text}}
+                            {{question.text|safe}}
                         </p>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                         <ul class="list-group"> 
                             {% for ans in answers %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center"> 
-                                    {{ans.text}}
+                                    {{ans.text|safe}}
                                     
                                     {% if ans.is_correct %}
                                         <span class="badge bg-success">
@@ -56,7 +56,7 @@
 
                         <div class="card-body">
                             <form action="" method="post"> {% csrf_token %}
-                                {{answer_form.as_p}}
+                                {{answer_form.as_p|safe}}
                                 <button type="submit" class="btn btn-primary w-100">Add Answer</button>
                             </form>
                         </div>
