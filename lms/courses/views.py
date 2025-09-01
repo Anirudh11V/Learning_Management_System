@@ -5,6 +5,7 @@ from enrollment.models import Enroll
 from users.services import notify_new_lesson
 from quiz.models import QuizAttempt, Quiz
 from users.models import UserLessonCompletion
+from users.task import task_notify_new_lesson
 
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
@@ -356,7 +357,7 @@ def lesson_create(request, course_slug, module_slug):    # Lesson creation.
             new_lesson.save()
             
             messages.success(request, f"Lesson '{new_lesson.title}' added successfully.")
-            notify_new_lesson(new_lesson, course)
+            task_notify_new_lesson(new_lesson.id, course.id)
             return redirect('courses:course_details', course_slug= course.slug)
         
     else:

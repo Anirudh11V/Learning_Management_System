@@ -8,3 +8,16 @@ services:
       - '1906:1906'
     env_file:
       - .env
+
+  redis:
+    image: redis:6-alpine
+    ports:
+    - "6379:6379"
+
+  celery_worker:
+    build: .
+    command: celery -A lms worker -l info
+    volumes:
+    - .:/app
+    depends_on:
+    - redis
