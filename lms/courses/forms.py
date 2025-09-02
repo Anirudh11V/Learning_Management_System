@@ -1,5 +1,5 @@
 from django import forms
-from . models import Course, Module, Lesson, Comment, Category
+from . models import Course, Module, Lesson, Comment, Category, Review
 
 from tinymce.widgets import TinyMCE
 
@@ -74,3 +74,22 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model= Comment
         fields = ['content']
+
+
+class ReviewForm(forms.ModelForm):
+    RATING_CHOICES = [
+        (5, '5 - Excellent'),
+        (4, '4 - Very Good'),
+        (3, '3 - Good'),
+        (2, '2 - Fair'),
+        (1, '1 - Poor'),
+    ]
+
+    rating = forms.ChoiceField(choices= RATING_CHOICES, widget= forms.RadioSelect)
+
+    class Meta:
+        model = Review
+        fields = ['rating', 'comment']
+        widgets= {
+            'comment': forms.Textarea(attrs= {'rows': 3, 'placeholder': 'Write your review here...'}),
+        }

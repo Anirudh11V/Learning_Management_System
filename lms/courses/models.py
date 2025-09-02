@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 from django.urls import reverse
+from django.db.models import Avg
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from django.contrib.auth import get_user_model
 # Create your models here.
@@ -56,6 +58,13 @@ class Course(models.Model):
     
     def get_absolute_url(self):
         return reverse('courses:course_details', args= [self.slug])
+    
+    @property
+    def average_rating(self):
+        avg = self.reviews.all().aggregate(Avg('rating'))['rating__avg']
+        if avg is None:
+            return 0
+        return round(avg, 1)
     
 
 class Module(models.Model):
@@ -128,3 +137,22 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comments by {self.author.username} on {self.lesson.title}."
+    
+
+class Review(models.Model):
+    course = models.ForeignKey(Course, on_delete= models.CASCADE, related_name= 'reviews')
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete= models.CASCADE, related_name= 'reviews',
+                                limit_choices_to= {'is_student': True})
+    
+    rating = models.PositiveIntegerField(
+        validators= [MinValueValidator(1), MaxValueValidator(5)]
+    )
+    comment = models.TextField(blank= True, null= True)
+    created_at = models.DateTimeField(auto_now_add= True)
+
+    class Meta:
+        unique_together= ('course', 'student')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Review for {self.course.title} by {self.student.username}."

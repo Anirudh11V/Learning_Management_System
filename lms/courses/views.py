@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Category, Course, Module, Lesson
-from .forms import CourseForm, ModuleForm, LessonForm, CommentForm, CategoryForm
+from .models import Category, Course, Module, Lesson, Review
+from .forms import CourseForm, ModuleForm, LessonForm, CommentForm, CategoryForm, ReviewForm
 from enrollment.models import Enroll
 from users.services import notify_new_lesson
 from quiz.models import QuizAttempt, Quiz
@@ -37,11 +37,33 @@ def course_detail(request, course_slug):
     course = get_object_or_404(Course, slug= course_slug, is_published= True)
     modules = course.modules.prefetch_related('lesson').all()
     is_enrolled = False
+    review_form = None
+    user_review = None
+
+    reviews = course.reviews.all().select_related('student')
 
     if request.user.is_authenticated and request.user.is_student:
         is_enrolled = Enroll.objects.filter(student= request.user, course= course).exists()
 
-    context= {'course': course, 'modules': modules, 'is_enrolled': is_enrolled, 'page_title': course.title}
+        # Check if the user has already reviewed this course. 
+        user_review = reviews.filter(student= request.user).first()
+
+        if is_enrolled and not user_review:
+            if request.method == 'POST':
+                review_form = ReviewForm(request.POST)
+                if review_form.is_valid():
+                    new_review = review_form.save(commit= False)
+                    new_review.course = course
+                    new_review.student = request.user
+                    new_review.save()
+                    messages.success(request, "Thank you for your review!")
+                    return redirect('courses:course_details', course_slug= course.slug)
+                
+                else:
+                    review_form = ReviewForm()
+
+    context= {'course': course, 'modules': modules, 'is_enrolled': is_enrolled, 
+              'reviews': reviews, 'review_form': review_form, 'user_review': user_review, 'page_title': course.title}
     return render(request, 'courses/course_detail.html', context)
 
 # ---------------------------------------------------------------------------------------------------.
