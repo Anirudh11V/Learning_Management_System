@@ -34,7 +34,7 @@
                             
                         </div>
                     {% endfor %}
-                        <button type="submit" class="btn btn-primary" name="course_category">
+                        <button type="submit" class="btn btn-primary w-25" name="course_category">
                             course_category
                         </button>
                 </form>
@@ -64,12 +64,14 @@
                     </div>
 
                 {% endfor %}
-                <button type="submit" class="btn btn-primary w-75" name="create_course">{{page_title}}</button>
+                
                 {% if page_title == 'Create New Course' %}
+                <button type="submit" class="btn btn-primary w-75" name="create_course">{{page_title}}</button>
                     <a href="{% url 'users:instructor_dashboard' %}" class="btn btn-secondary">
                         &laquo; Back
                     </a>
                 {% else %}
+                <button type="submit" class="btn btn-primary w-75" name="create_course">Edit {{object.title}}</button>
                     <a href="{{course.get_absolute_url}}" class="btn btn-secondary">
                         &laquo; Back
                     </a>

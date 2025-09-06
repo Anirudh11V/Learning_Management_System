@@ -85,7 +85,10 @@ class Module(models.Model):
         return super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.order}, {self.title} ({self.course.title})"    
+        return f"{self.order}, {self.title} ({self.course.title})" 
+
+    def get_absolute_url(self):
+        return reverse('courses:course_details', args= [self.course.slug])   
 
 
 class Lesson(models.Model):

@@ -2,7 +2,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, Course, Module, Lesson, Review
 from .forms import CourseForm, ModuleForm, LessonForm, CommentForm, CategoryForm, ReviewForm
 from enrollment.models import Enroll
-from users.services import notify_new_lesson
 from quiz.models import QuizAttempt, Quiz
 from users.models import UserLessonCompletion
 from users.task import task_notify_new_lesson
@@ -14,6 +13,9 @@ from django.db.models import Max
 from django.utils import timezone
 from django.contrib import messages
 from django.utils.text import slugify
+from django.views.generic import CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse_lazy
 # Create your views here.
 
 # ------------- COURSE LIST/DETAIL-VIEW ------------------------------------------------.
@@ -230,43 +232,33 @@ def course_create(request):                 # Course creation.
     context = {'form': form, 'c_form': c_form, 'page_title': 'Create New Course'}
     return render(request, 'courses/course_form.html', context)
 
-@login_required(login_url= 'users:login')
-def course_update(request, course_slug):    # Course edit/updating.
-    course = get_object_or_404(Course, slug= course_slug)
-    if course.instructor != request.user:
-        messages.error(request, 'You are not authorized to edit this course.')
-        return redirect('users:instructor_dashboard')
-    
-    if request.method == 'POST':
-        form = CourseForm(request.POST, instance= course)
-        if 'create_course' in request.POST and form.is_valid():
-            form.save()
-            messages.success(request, f"Course '{course.title}' updated successfully.")
-            return redirect('courses:course_details', course_slug= course.slug)
-        else:
-            messages.error(request, 'Please correct the errors.')
 
-    else:
-        form = CourseForm(instance= course)
+class CourseUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Course
+    form_class = CourseForm
+    template_name = 'courses/course_form.html'
 
-    context = {'form': form, 'course': course, 'page_title': f'Edit Course: {course.title}'}
-    return render(request, 'courses/course_form.html', context)
+    def test_func(self):
+        # Check if the current user is the instructor of the course.
+        return self.get_object().instructor == self.request.user
+    
+    def form_valid(self, form):
+        messages.success(self.request, "Course updated succcessfully!")
+        return super().form_valid(form)
+    
 
-@login_required(login_url= 'users:login')
-def course_delete(request, course_slug):     # Course deletion.
-    course = get_object_or_404(Course, slug= course_slug)
-    if course.instructor != request.user:
-        messages.error(request, 'You are not authorized to delete this course.')
-        return redirect('users:instructor_dashboard')
+class CourseDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Course
+    template_name = 'courses/course_confirm_delete.html'
+    success_url = reverse_lazy('users:instructor_dashboard')
+
+    def test_func(self):
+         # Check if the current user is the instructor of the course.
+        return self.get_object().instructor == self.request.user
     
-    if request.method == 'POST':
-        course_title = course.title
-        course.delete()
-        messages.success(request, f"Course '{course.title}' deleted successfully.")
-        return redirect('courses:course_list')
-    
-    context = {'course': course, 'page_title': f'Delete Course: {course.title}'}
-    return render(request, 'courses/course_confirm_delete.html', context)
+    def form_valid(self, form):
+        messages.success(self.request, "Course deleted succcessfully!")
+        return super().form_valid(form)
 
 # ------------- COURSE CRUD ENDS ------------------------------------------------.
 
@@ -297,133 +289,127 @@ def course_manage(request, course_slug):
 
 # ------------- MODULE CRUD ------------------------------------------------.
 
-@login_required(login_url= 'users:login')
-def module_create(request, course_slug):     # Module creation.
-    course = get_object_or_404(Course, slug= course_slug)
-    if course.instructor != request.user:
-        messages.error(request, 'You are not authorized to add module to this course.')
-        return redirect('users:instructor_dashboard')
+class ModuleCreateView(LoginRequiredMixin, CreateView):
+    model = Module
+    form_class = ModuleForm
+    template_name = 'courses/module_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['course'] = get_object_or_404(Course, slug= self.kwargs['course_slug'])
+        return context
     
-    if request.method == 'POST':
-        form = ModuleForm(request.POST)
-        if form.is_valid():
-            new_module = form.save(commit= False)
-            new_module.course = course
-            new_module.slug = slugify(new_module.title)
-            new_module.save()
-            messages.success(request, f"Module '{new_module.title}' added successfully.")
-            return redirect('courses:course_details', course_slug= course.slug)
+    def form_valid(self, form):
+        course = get_object_or_404(Course, slug= self.kwargs['course_slug'])
+        form.instance.course = course
+
+        if course.instructor != self.request.user:
+            messages.error(self.request, "you are not authorized to add module in this course.")
+            return redirect('courses:course_list')
         
-    else:
-        form = ModuleForm()
+        max_order = course.modules.aggregate(Max('order'))['order__max']
+        form.instance.order = (max_order or 0) + 1
 
-    context= {'form': form, 'course': course, 'page_title': 'Add New Module'}
-    return render(request, 'courses/module_form.html', context)
-
-@login_required(login_url= 'users:login')
-def module_update(request, course_slug, module_slug):    # Module edit/updating.
-    module = get_object_or_404(Module, slug= module_slug, course__slug= course_slug)
-    if module.course.instructor != request.user:
-        messages.error(request, 'You are not authorized to edit this module.')
-        return redirect('courses:course_details', course_slug= module.course.slug)
+        messages.success(self.request, "Module added successfully.")
+        return super().form_valid(form)
     
-    if request.method == 'POST':
-        form = ModuleForm(request.POST, instance= module)
-        if form.is_valid():
-            form.save()
-            messages.success(request, f"Module {module.title} updated successfully.")
-            return redirect('courses:course_details', course_slug= module.course.slug)
+    def get_success_url(self):
+        return self.object.course.get_absolute_url()
     
-    else:
-        form = ModuleForm(instance= module)
 
-    context= {'form': form, 'course': module.course, 'page_title': f'Edit Module: {module.title}'}
-    return render(request, 'courses/module_form.html', context)
+class ModuleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Module
+    form_class = ModuleForm
+    template_name = 'courses/module_form.html'
+    slug_url_kwarg = 'module_slug'
 
-@login_required(login_url= 'users:login')
-def module_delete(request, course_slug, module_slug):    # Module deletion.
-    module = get_object_or_404(Module, slug= module_slug, course__slug= course_slug)
-    if module.course.instructor != request.user:
-        messages.error(request, 'You are not authorized to delete this module.')
-        return redirect('courses:course_details', course_slug= module.course.slug)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['course'] = self.object.course
+        return context
     
-    if request.method == "POST":
-        module_title = module.title
-        module.delete()
-        messages.success(request, f"Module {module.title} deleted successfully.")
-        return redirect('courses:course_details', course_slug= module.course.slug)
+    def test_func(self):
+        return self.get_object().course.instructor == self.request.user
     
-    context = {'course': module.course, 'page_title': f'Delete Module: {module.title}'}
-    return render(request, 'courses/module_confirm_delete.html', context)
+    def get_success_url(self):
+        return self.object.course.get_absolute_url()
 
+
+class ModuleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Module
+    template_name = 'courses/module_confirm_delete.html'
+    slug_url_kwarg = 'module_slug'
+
+    def test_func(self):
+        return self.get_object().course.instructor == self.request.user
+    
+    def get_success_url(self):
+        return self.object.course.get_absolute_url()
 # ------------- MODULE CRUD ENDS------------------------------------------------.
 
 # ------------- LESSON CRUD STARTS------------------------------------------------.
 
-@login_required(login_url= 'users:login')
-def lesson_create(request, course_slug, module_slug):    # Lesson creation.
-    course= get_object_or_404(Course, slug= course_slug)
-    module= get_object_or_404(Module, course= course, title__iexact= module_slug)
-    if course.instructor != request.user:
-        messages.error(request, 'You are not authorized to add lesson to this course.')
-        return redirect('users:instructor_dashboard')
-    
-    if request.method == 'POST':
-        form = LessonForm(request.POST, request.FILES)
-        if form.is_valid():
-            new_lesson = form.save(commit= False)
-            new_lesson.module = module
-            new_lesson.slug = slugify(new_lesson.title)
-            max_order = Lesson.objects.filter(module= module).aggregate(Max('order'))['order__max']
-            new_lesson.order = max_order + 1 if max_order is not None else 1
-            new_lesson.save()
-            
-            messages.success(request, f"Lesson '{new_lesson.title}' added successfully.")
-            task_notify_new_lesson(new_lesson.id, course.id)
-            return redirect('courses:course_details', course_slug= course.slug)
+class LessonCreateView(LoginRequiredMixin, CreateView):
+    model = Lesson
+    form_class = LessonForm
+    template_name = 'courses/lesson_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['course'] = get_object_or_404(Course, slug= self.kwargs['course_slug'])
+        context['module'] = get_object_or_404(Module, slug= self.kwargs['module_slug'])
+        return context
+ 
+    def form_valid(self, form):
+        module = get_object_or_404(Module, slug= self.kwargs['module_slug'])
+        form.instance.module = module
+
+        # check permission
+        if module.course.instructor != self.request.user:
+            messages.error(self.request, "You are not authorized to add lessons to this course.")
+            return redirect('courses:course_list')
         
-    else:
-        form = LessonForm()
-
-    context= {'form': form, 'course': course, 'module': module, 'page_title': 'Add New Lesson'}
-    return render(request, 'courses/lesson_form.html', context)
-
-@login_required(login_url= 'users:login')
-def lesson_update(request, course_slug, module_slug, lesson_slug):   # Lesson edit/updating.
-    lesson = get_object_or_404(Lesson, slug= lesson_slug, module__slug= module_slug, module__course__slug= course_slug)
-    if lesson.module.course.instructor != request.user:
-        messages.error(request, 'You are not authorized to edit this lesson.')
-        return redirect('courses:course_details', course_slug= lesson.module.course.slug)
+        # Automatically calculate and set the order for the new lesson.
+        max_order = module.lesson.aggregate(Max('order'))['order__max']
+        form.instance.order = (max_order or 0) + 1
+        
+        messages.success(self.request, "Lesson created successfully.")
+        return super().form_valid(form)
     
-    if request.method == 'POST':
-        form = LessonForm(request.POST, instance= lesson)
-        if form.is_valid():
-            form.save()
-            messages.success(request, f"Lesson {lesson.title} updated successfully.")
-            return redirect('courses:course_details', course_slug= lesson.module.course.slug)
+    def get_success_url(self):
+        # Redirect to the course detail page after creation
+        return self.object.module.course.get_absolute_url()
     
-    else:
-        form = LessonForm(instance= lesson)
 
-    context= {'form': form, 'course': lesson.module.course, 'module': lesson.module,
-              'page_title': f'Edit Lesson: {lesson.title}'}
-    return render(request, 'courses/lesson_form.html', context)
+class LessonUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Lesson
+    form_class = LessonForm
+    template_name = 'courses/lesson_form.html'
+    slug_url_kwarg = 'lesson_slug'  # to find lesson by its own slug
 
-@login_required(login_url= 'users:login')
-def lesson_delete(request, course_slug, module_slug, lesson_slug):   # Lesson deletion.
-    lesson = get_object_or_404(Lesson, slug= lesson_slug, module__slug= module_slug, module__course__slug= course_slug)
-    if lesson.module.course.instructor != request.user:
-        messages.error(request, 'You are not authorized to delete this lesson.')
-        return redirect('courses:course_details', course_slug= lesson.module.course.slug)
+    def get_context_data(self, **kwargs):
+        # This adds the course and module for the template
+        context = super().get_context_data(**kwargs)
+        context['course'] = self.object.module.course
+        context['module'] = self.object.module
+        return context
+
+    def test_func(self):
+        # Check if the current user is the instructor
+        return self.get_object().module.course.instructor == self.request.user
     
-    if request.method == 'POST':
-        lesson_title = lesson.title
-        lesson.delete()
-        messages.success(request, f"Lesson {lesson.title} deleted successfully.")
-        return redirect('users:instructor_dashboard')
+    def get_success_url(self):
+        return self.object.module.course.get_absolute_url()
     
-    context = {'course': lesson.module.course, 'page_title': f'Delete Lesson: {lesson.title}',
-               'lesson': lesson, 'module': lesson.module}
-    return render(request, 'courses/lesson_confirm_delete.html', context)
 
+class LessonDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Lesson
+    template_name = 'courses/lesson_confirm_delete.html'
+    slug_url_kwarg = 'lesson_slug'
+
+    def test_func(self):
+        return self.get_object().module.course.instructor == self.request.user
+
+    def get_success_url(self):
+        return self.object.module.get_absolute_url()
 # ------------- LESSON CRUD ENDS------------------------------------------------.

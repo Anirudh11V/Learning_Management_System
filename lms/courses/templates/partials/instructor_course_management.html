@@ -7,24 +7,28 @@
     <hr>
 
     <div class="instructor_manage">
-        <h3>Course management Tools</h3>
-        <p>
-            <a href="{% url 'courses:course_update' course.slug %}">Edit Course</a> | 
-            <a href="{% url 'courses:course_delete' course.slug %}">Delete Course</a>
-        </p>
-        <p>
-            <a href="{% url 'discussion:post_list' course.slug %}" class="btn btn-info">
-                Go to Course Discussion
-            </a>
-        </p>
+        <span class="d-flex f-row justify-content-between">
+            <h3>Course management Tools</h3>
 
+            <p class="m-auto">
+                <a href="{% url 'discussion:post_list' course.slug %}" class="btn btn-success text-light">
+                    Go to Course Discussion
+                </a>
+            </p>
+
+            <p class="m-auto">
+                <a href="{% url 'courses:course_update' course.slug %}">Edit Course</a> | 
+                <a href="{% url 'courses:course_delete' course.slug %}">Delete Course</a>
+            </p>
+        
+        </span>
         <h3>Modules & Lessons</h3>
         <p>
             <a href="{% url 'courses:module_create' course.slug %}">Add New module</a>
         </p>
         {% for module in course.modules.all %}
             <div class="module_manage">
-                <h5>{{module.title}}</h5>
+                <h5>{{module.order}} : {{module.title}}</h5>
                 <p>
                     <a href="{% url 'courses:module_update' course.slug module.slug %}">Edit Module</a> |  
                     <a href="{% url 'courses:module_delete' course.slug module.slug%}">Delete Module</a> | 
@@ -32,27 +36,30 @@
                 </p>
                 <ul>
                     {% for lesson in module.lesson.all %}
-                        <li>
-                            {{lesson.title}}
-                            <a href="{% url 'courses:lesson_update' course.slug module.slug lesson.slug%}">
-                                Edit Lesson
-                            </a> | 
-                            <a href="{% url 'courses:lesson_delete' course.slug module.slug lesson.slug %}">
-                                Delete Lesson
-                            </a>
+                        <li class="list-group list-group-item list-group-item-action d-flex f-column ">
+                            {{lesson.order}} : {{lesson.title}}
+                            <span class="">
+                                <a href="{% url 'courses:lesson_update' course.slug module.slug lesson.slug%}">
+                                    Edit Lesson
+                                </a> | 
+                                <a href="{% url 'courses:lesson_delete' course.slug module.slug lesson.slug %}">
+                                    Delete Lesson
+                                </a>
+                            </span>
+                        
+                            <!-- Quiz -->
+                            <div class="d-flex justify-content-end mt-3 mb-3">
+                                {% if not lesson.quiz %}
+                                    <a href="{% url 'quiz:quiz_create' lesson.id %}" class="btn btn-sm btn-primary w-25">
+                                        Add Quiz
+                                    </a>
+                                {% elif lesson.quiz %}
+                                    <a href="{% url 'quiz:quiz_manage' lesson.quiz.id %}" class="btn btn-sm btn-secondary">
+                                        Manage Quiz
+                                    </a>
+                                {% endif %}
+                            </div>
                         </li>
-                        <!-- Quiz -->
-                        <div class="card-footer">
-                            {% if not lesson.quiz %}
-                                <a href="{% url 'quiz:quiz_create' lesson.id %}" class="btn btn-sm btn-primary w-50">
-                                    Add Quiz
-                                </a>
-                            {% elif lesson.quiz %}
-                                <a href="{% url 'quiz:quiz_manage' lesson.quiz.id %}" class="btn btn-sm btn-secondary">
-                                    Manage Quiz
-                                </a>
-                            {% endif %}
-                        </div>
 
                     {% endfor %}
                 </ul>

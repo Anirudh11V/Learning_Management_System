@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    {{page_title}}
+    {{object.title}}
 {% endblock title %}
 
 {% block content %}
@@ -12,7 +12,7 @@
         
         <div class="container p-auto">
 
-            <h2>{{page_title}}</h2>
+            <h2>Module Creation / Edit</h2>
             <p>For Course : {{course.title}}</p>
 
             <form action="" method="post"> {% csrf_token %}
@@ -34,7 +34,7 @@
 
                 {% endfor %}
 
-                <button type="submit" class="btn btn-primary w-50 mt-3">{{page_title}}</button>
+                <button type="submit" class="btn btn-primary w-50 mt-3">Create / Edit</button>
                 <a href="{{course.get_absolute_url}}" class="btn btn-secondary mt-3">
                     &laquo; Back
                 </a>

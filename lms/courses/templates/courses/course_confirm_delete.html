@@ -7,7 +7,7 @@
 
 {% block content %}
 
-<main>
+<!-- <main>
     <section>
         <div class="delete_container">
             
@@ -26,6 +26,36 @@
 
         </div>
     </section>
-</main>
+</main> -->
+
+<section class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card">
+
+                <div class="card-header">
+                    <h4>Confirm Delete</h4>
+                </div>
+
+                <div class="card-body">
+                    <p> Are you sure you want to delete the course
+                        "<strong> {{object.title}} </strong>"? </p>
+                    <p class="text-danger"> This action cannot be undone.
+                        All modules, lessons and quizzes associated with this course will also be deleted.
+                    </p>
+
+                    <form action="" method="post"> {% csrf_token %} 
+                        <button type="submit" class="btn btn-danger w-50">Yes, Delete</button>
+                        <a href="{% url 'courses:course_details' object.slug %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
 
 {% endblock content %}
