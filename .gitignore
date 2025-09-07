@@ -20,5 +20,6 @@ lib/
 dist/
 
 # Byte compiled
+__pycache__
 __pycache__/
 */migrations/

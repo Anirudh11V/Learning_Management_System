@@ -66,7 +66,7 @@ Technologies Used.
 		-Django 5.2
 		
 	-Database-
-		-sqlite3 
+		-PostgreSQL 
 		
 	-Frontend-
 		-Html5
