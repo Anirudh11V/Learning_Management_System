@@ -21,4 +21,4 @@ dist/
 
 # Byte compiled
 __pycache__/
-migrations
+*/migrations/
